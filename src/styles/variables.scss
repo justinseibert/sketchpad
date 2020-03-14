@@ -1,0 +1,44 @@
+$breakpoint: (
+  mobile:    414px,
+  tablet:    768px,
+  landscape: 1024px,
+  desktop:   1280px,
+);
+
+$z-map: (
+  hide:       -9999,
+  normal:      1,
+  interactive: 999,
+  menu:        9999,
+  alert:       99999,
+  loading:     999999,
+);
+
+$fonts: (
+  default: (
+    family: ("Source Sans Pro", sans-serif),
+    weight: 300,
+    style: normal
+  )
+);
+
+$space-map: (
+  scroll:  12px,
+  minimal: 0.25em,
+  light:   0.75em,
+  medium:  1.5em,
+  heavy:   2.5em,
+);
+
+$colors: (
+  scroll:      #222,
+  text:        #222,
+  text-active: #333,
+  input:       #00F,
+  border:      #222,
+  container:   #F5F5F5,
+  accent:      #E5E5E5,
+  body:        #FFF,
+  loading-a:   #F5F5F5,
+  loading-b:   #E5E5E5,
+);

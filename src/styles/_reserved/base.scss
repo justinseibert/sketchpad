@@ -1,0 +1,68 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-size: 100%;
+  color: color(text);
+  background: color(body);
+  @include -font(body);
+}
+
+div,
+header,
+main,
+article,
+figure,
+figcaption,
+iframe,
+address {
+  display: block;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+iframe {
+  border: none;
+  outline: none;
+}
+
+img {
+  display: block;
+}
+
+svg {
+  fill: color(text);
+  transition: fill 100ms;
+}
+
+td,
+th,
+address {
+  font-style: normal;
+  & > span,
+  & > strong,
+  & > em {
+    display: block;
+  }
+}
+
+hr {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: color(border);
+  margin: space(medium) 0;
+  border: none;
+  overflow: hidden;
+}

@@ -1,0 +1,76 @@
+._esprcsso-scrollbars > .os-scrollbar-horizontal {
+    right: space(scroll);
+    height: space(scroll);
+    padding: 0 space(medium);
+}
+._esprcsso-scrollbars > .os-scrollbar-vertical {
+    bottom: space(scroll);
+    width: space(scroll);
+    padding: 0;
+}
+._esprcsso-scrollbars.os-host-rtl > .os-scrollbar-horizontal {
+    left: space(scroll);
+    right: 0;
+}
+._esprcsso-scrollbars > .os-scrollbar-corner {
+    height: space(scroll);
+    width: space(scroll);
+    background-color: transparent;
+}
+._esprcsso-scrollbars > .os-scrollbar > .os-scrollbar-track {
+    background: transparent;
+    cursor: pointer;
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track:before,
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track:before {
+    content: '';
+    display: block;
+    position: absolute;
+    background: color(container);
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track:before,
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:before {
+    left: 0;
+    right: 0;
+    height: space(scroll, 0.4);
+    bottom: 0;
+    margin-top: -1px;
+}
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track:before,
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle:before {
+    top: 0;
+    bottom: 0;
+    width: space(scroll, 0.4);
+    right: 0;
+}
+._esprcsso-scrollbars > .os-scrollbar > .os-scrollbar-track > .os-scrollbar-handle:before {
+    content: '';
+    display: block;
+    position: absolute;
+    background: color(scroll);
+    border-radius: 0;
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:hover:before,
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle.active:before {
+    height: space(scroll, 0.7);
+}
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle:hover:before,
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle.active:before {
+    width: space(scroll, 0.7);
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:hover:before,
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle:hover:before {
+    background: color(scroll);
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle.active:before,
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle.active:before {
+    background: color(scroll);
+}
+._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle {
+    height: 100%;
+    min-width: 30px;
+}
+._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle {
+    width: 100%;
+    min-height: 30px;
+}

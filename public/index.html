@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>scsstspad</title>
+
+    <% for (var css in htmlWebpackPlugin.files.css) { %>
+    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
+    <% } %>
+
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
+    <script type="text/javascript" src="<%= htmlWebpackPlugin.files.chunks[chunk].entry %>"></script>
+    <% } %>
+
+    <script type="text/javascript">
+      window.addEventListener('load', function() {
+        var elem = document.getElementById('app');
+        var instance = new App(elem);
+        instance.init();
+      })
+    </script>
+  </body>
+</html>

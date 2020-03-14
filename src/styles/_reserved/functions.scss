@@ -1,0 +1,99 @@
+// MAP FUNCTIONS
+
+@function map-deep-get($map, $keys...) {
+  @each $key in $keys {
+    $map: map-get($map, $key);
+  }
+  @return $map;
+}
+
+@function screen($key, $amount:0) {
+  @if map-has-key($breakpoint, $key) {
+    @return map-get($breakpoint, $key) + $amount;
+  }
+
+  @warn "Unknown `#{$key}` in $breakpoint.";
+  @return null;
+}
+
+@function z($key, $adjustment:0) {
+  @if map-has-key($z-map, $key) {
+    @return map-get($z-map, $key) + $adjustment;
+  }
+
+  @warn "Unknown `#{$key}` in $z-map.";
+  @return null;
+}
+
+@function space($key, $amount:1) {
+  @if map-has-key($space-map, $key) {
+    @return map-get($space-map, $key) * $amount;
+  }
+
+  @warn "Unknown `#{$key}` in $space-map.";
+  @return null;
+}
+
+@function color($key) {
+  @if map-has-key($colors, $key) {
+    @return map-get($colors, $key);
+  }
+
+  @warn "Unknown `#{$key}` in $colors.";
+  @return null;
+}
+
+@function fade($key, $amount) {
+  @if map-has-key($colors, $key) {
+    @return fade-out(map-get($colors, $key), 1 - $amount);
+  }
+
+  @warn "Unknown `#{$key}` in $colors.";
+  @return null;
+}
+
+
+// STYLE MIXINS
+
+@mixin -font($key:default) {
+  font-family: map-deep-get($fonts, default, family);
+  font-weight: map-deep-get($fonts, default, weight);
+  font-style: map-deep-get($fonts, default, style);
+
+  @if map-has-key($fonts, $key) and ($key != default) {
+    font-family: map-deep-get($fonts, $key, family);
+    font-weight: map-deep-get($fonts, $key, weight);
+    font-style: map-deep-get($fonts, $key, style);
+  }
+};
+
+@mixin -background-image($width:100%, $height:null) {
+  width: $width;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  &:after {
+    display: block;
+    content: '';
+    @if $height {
+      padding-bottom: $height;
+    } @else {
+      padding-bottom: $width;
+    }
+  }
+}
+
+@mixin -animate($name,$time,$iteration) {
+  -webkit-animation-name: $name;
+  animation-name: $name;
+  -webkit-animation-duration: $time;
+  animation-duration: $time;
+  -webkit-animation-iteration-count: $iteration;
+  animation-iteration-count: $iteration;
+  animation-fill-mode: both;
+}
+
+@mixin -delay($time) {
+  -webkit-animation-delay: $time;
+  animation-delay: $time;
+}

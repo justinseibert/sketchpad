@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "es6",
+    "noImplicitAny": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "target": "es5"
+  },
+  "exclude": [
+    ".git",
+    "dist",
+    "node_modules",
+    "public"
+  ]
+}
