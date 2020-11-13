@@ -62,7 +62,7 @@
 .overflow-container {
   position: relative;
   overflow: auto;
-  border: 1px solid color(container);
+  border: 1px solid var(--container);
   & > :first-child {
     margin: 0 space(light);
     min-width: screen(tablet);

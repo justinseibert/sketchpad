@@ -65,7 +65,7 @@ a:link,
 a:visited,
 a:hover,
 a:active {
-  color: color(text);
+  color: var(--text);
   text-decoration: none;
   transition: color 100ms;
 }
@@ -83,7 +83,7 @@ li {
   a:visited,
   a:hover,
   a:active {
-    color: color(input);
+    color: var(--input);
     @include -font(body-emphasis);
   }
 }

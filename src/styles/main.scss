@@ -1,9 +1,9 @@
 @charset 'UTF-8';
 
-@import 'variables';
-
-@import '_reserved/functions';
-@import '_reserved/base';
-@import '_reserved/grid';
-@import '_reserved/typography';
-@import '_reserved/extensions';
+@import 'core/variables';
+@import 'core/colors';
+@import 'core/functions';
+@import 'core/base';
+@import 'core/grid';
+@import 'core/typography';
+@import 'core/extensions';

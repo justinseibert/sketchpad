@@ -1,0 +1,28 @@
+:root,
+body {
+  --scroll:      #222;
+  --text:        #222;
+  --text-active: #333;
+  --input:       #00F;
+  --border:      #222;
+  --container:   #F5F5F5;
+  --accent:      #E5E5E5;
+  --body:        #FFF;
+  --loading-a:   #F5F5F5;
+  --loading-b:   #E5E5E5;
+};
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --scroll:      #9e8c80;
+    --text:        #9e8c80;
+    --text-active: #cab3a4;
+    --input:       #9e8c80;
+    --border:      #9e8c80;
+    --container:   #2e2b28;
+    --accent:      #2e2b28;
+    --body:        #2e2b28;
+    --loading-a:   #F5F5F5;
+    --loading-b:   #E5E5E5;
+  }
+}
