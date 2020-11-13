@@ -13,8 +13,8 @@ body,
 
 body {
   font-size: 100%;
-  color: color(text);
-  background: color(body);
+  color: var(--text);
+  background: var(--body);
   @include -font(body);
 }
 
@@ -42,7 +42,7 @@ img {
 }
 
 svg {
-  fill: color(text);
+  fill: var(--text);
   transition: fill 100ms;
 }
 
@@ -61,7 +61,7 @@ hr {
   display: block;
   width: 100%;
   height: 1px;
-  background: color(border);
+  background: var(--border);
   margin: space(medium) 0;
   border: none;
   overflow: hidden;

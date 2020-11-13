@@ -26,7 +26,7 @@
     content: '';
     display: block;
     position: absolute;
-    background: color(container);
+    background: var(--container);
 }
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track:before,
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:before {
@@ -47,7 +47,7 @@
     content: '';
     display: block;
     position: absolute;
-    background: color(scroll);
+    background: var(--scroll);
     border-radius: 0;
 }
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:hover:before,
@@ -60,11 +60,11 @@
 }
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle:hover:before,
 ._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle:hover:before {
-    background: color(scroll);
+    background: var(--scroll);
 }
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle.active:before,
 ._esprcsso-scrollbars > .os-scrollbar-vertical > .os-scrollbar-track > .os-scrollbar-handle.active:before {
-    background: color(scroll);
+    background: var(--scroll);
 }
 ._esprcsso-scrollbars > .os-scrollbar-horizontal > .os-scrollbar-track > .os-scrollbar-handle {
     height: 100%;
