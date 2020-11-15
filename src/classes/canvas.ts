@@ -32,7 +32,7 @@ class Canvas {
     this.dpi = 2
     this.height = window.innerHeight
     this.layers = [] as Layer[]
-    this.margin = 100
+    this.margin = 0
     this.width = window.innerWidth
   }
 

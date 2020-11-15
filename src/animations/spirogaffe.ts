@@ -22,7 +22,8 @@ class Animation extends Canvas {
 
     const stroke:Stroke = new Stroke({
       color: new Color(this.color),
-      points: [ new Point(this.center), new Point(this.center) ]
+      points: [ new Point(this.center), new Point(this.center) ],
+      width: 2,
     })
     stroke.color.l = 100
     this.layers = [
@@ -51,9 +52,31 @@ class Animation extends Canvas {
     return u.radian(u.between(angle - this.maxTurn, angle + this.maxTurn))
   }
 
+  handleDecay() {
+    const updatedLayers = this.layers.reduce((layers:Layer[], layer:Layer) => {
+      const updatedStrokes = layer.strokes.reduce((strokes:Stroke[], stroke:Stroke) => {
+        stroke.color.l -= 0.1
+        stroke.width *= 0.9999
+        if (stroke.color.l > this.color.l) {
+          strokes.push(stroke)
+        }
+        return strokes
+      }, [])
+      if (updatedStrokes.length > 0) {
+        layers.push(new Layer({ strokes: updatedStrokes }))
+      }
+      return layers
+    }, [])
+
+    this.layers = [ ...updatedLayers ]
+  }
+
   render() {
-    const { strokes } = this.layers[this.layerIndex]
-    const { points: [ start, end ], color, width } = strokes[this.strokeIndex]
+    const {
+      points: [ start, end ],
+      color,
+      width
+    } = this.layers[this.layerIndex].strokes[this.strokeIndex]
 
     const r = 12
     const a = this.angle + this.turn()
@@ -72,9 +95,11 @@ class Animation extends Canvas {
       ]
     })
 
+    this.handleDecay()
+    this.layerIndex = this.layers.length - 1
     this.layers[this.layerIndex].strokes.push(stroke)
+    this.strokeIndex = this.layers[this.layerIndex].strokes.length - 1
     this.angle = a
-    this.strokeIndex += 1
     this.redraw()
 
     if (point.y > this.margin && point.x > this.margin && point.y < this.height - this.margin && point.x < this.width - this.margin) {

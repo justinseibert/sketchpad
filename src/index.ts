@@ -1,8 +1,8 @@
 import '@/styles/main.scss'
 
 // import Animation from '@/animations/frosty'
-import Animation from '@/animations/all-roads'
-// import Animation from '@/animations/spirogaffe'
+// import Animation from '@/animations/all-roads'
+import Animation from '@/animations/spirogaffe'
 
 import { CanvasType, BoxType, PointType } from '@/types'
 
