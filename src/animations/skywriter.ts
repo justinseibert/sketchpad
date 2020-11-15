@@ -17,7 +17,7 @@ class Animation extends Canvas {
     super(args)
 
     this.angle = this.randomAngle()
-    this.maxTurn = 15
+    this.maxTurn = 10
     this.layerIndex = 0
     this.strokeIndex = 0
     this.direction = 1
@@ -49,10 +49,11 @@ class Animation extends Canvas {
       return 1 - (distanceFromEdge[axis] / (this.center[axis] - this.margin))
     }
 
-    const nearest = ratio(distanceFromEdge.x < distanceFromEdge.y ? 'x' : 'y')
+    const axis = distanceFromEdge.x < distanceFromEdge.y ? 'x' : 'y'
+    const nearest = ratio(axis)
     const angle = u.radian(u.between(0, nearest * this.maxTurn))
 
-    if (nearest < 0.7 && u.chance(0.01).bool) {
+    if (nearest > 0.9 && u.chance(0.1).bool) {
       this.direction *= -1
     }
     return angle * this.direction
@@ -60,21 +61,11 @@ class Animation extends Canvas {
 
   handleDecay() {
     const updatedLayers = this.layers.reduce((layers:Layer[], layer:Layer) => {
-      // let start:Point|null = null
       const updatedStrokes = layer.strokes.reduce((strokes:Stroke[], stroke:Stroke, index: number) => {
         stroke.color.l *= 0.999
         stroke.width *= 0.99
 
-
         if (stroke.color.l > this.color.l && stroke.width > 0.005) {
-          // const end = { ...stroke.points[1] }
-          // end.x *= u.between(0.999, 0.99)
-          // end.y *= u.between(0.999, 0.99)
-          // stroke.points = [
-          //   start || stroke.points[1],
-          //   end
-          // ]
-          // start = end
           strokes.push(stroke)
         }
         return strokes
@@ -129,9 +120,9 @@ class Animation extends Canvas {
       } else if (point.y < this.margin) {
         translation.y = this.height - this.margin
       } else if (point.x > this.width - this.margin) {
-        translation.x = this.margin + 1
+        translation.x = this.margin
       } else if (point.y > this.height - this.margin) {
-        translation.y = this.margin + 1
+        translation.y = this.margin
       }
       stroke.points = [
         new Point(translation),
