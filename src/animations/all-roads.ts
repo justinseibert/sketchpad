@@ -1,15 +1,31 @@
 import Canvas from '@/classes/canvas'
+import Stroke from '@/classes/stroke'
+import Color from '@/classes/color'
+import Point from '@/classes/point'
+import Layer from '@/classes/layer'
+
 import u from '@/utils'
 
-import { CanvasType, PointType } from '@/types'
-
 class Animation extends Canvas {
-  point: PointType
   angle: number
-  constructor(canvas: CanvasType) {
-    super(canvas)
-    this.point = { ...canvas.center }
+  layerIndex: number
+  strokeIndex: number
+
+  constructor(args: any) {
+    super(args)
+
     this.angle = this.turn(360)
+    this.layerIndex = 0
+    this.strokeIndex = 0
+
+    const stroke:Stroke = new Stroke({
+      color: new Color(this.color),
+      points: [ new Point(this.center), new Point(this.center) ]
+    })
+    stroke.color.l = 100
+    this.layers = [
+      new Layer({ strokes: [ stroke ] })
+    ]
   }
 
   turn(max: number) {
@@ -18,29 +34,46 @@ class Animation extends Canvas {
   }
 
   render() {
-    const { center, box, margin } = this.canvas
+    const {
+      points: [ start, end ],
+      color,
+      width
+    } = this.layers[this.layerIndex].strokes[this.strokeIndex]
+
     const r = 12
     const a = this.angle + this.turn(60)
 
-    const x = this.point.x + (r * Math.sin(a))
-    const y = this.point.y + (r * Math.cos(a))
+    const point = new Point({
+      x: end.x + (r * Math.sin(a)),
+      y: end.y + (r * Math.cos(a))
+    })
 
-    this.ctx.strokeStyle = '#9e8c80'
-    this.ctx.lineWidth = 1
-    this.ctx.beginPath()
-    this.ctx.moveTo(this.point.x, this.point.y)
-    this.ctx.lineTo(x,y)
-    this.ctx.stroke()
+    const stroke = new Stroke({
+      color: new Color(color),
+      width,
+      points: [
+        new Point(end),
+        point,
+      ]
+    })
 
+    this.layers[this.layerIndex].strokes.push(stroke)
     this.angle = a
-    this.point = { x, y }
+    this.strokeIndex += 1
+    this.redraw()
 
-    if (y > margin && x > margin && y < box.h - margin && x < box.w - margin) {
+    if (point.y > this.margin && point.x > this.margin && point.y < this.height - this.margin && point.x < this.width - this.margin) {
       this.animate = u.requestInterval(30, () => this.render())
     } else {
       this.animate.cancel()
+      stroke.points = [
+        new Point(this.center),
+        new Point(this.center)
+      ]
+      this.layers.push(new Layer({ strokes: [ stroke ] }))
+      this.layerIndex += 1
+      this.strokeIndex = 0
       this.angle = this.turn(360)
-      this.point = { ...center }
       this.render()
     }
   }

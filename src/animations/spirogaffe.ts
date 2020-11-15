@@ -1,27 +1,33 @@
 import Canvas from '@/classes/canvas'
 import Stroke from '@/classes/stroke'
+import Color from '@/classes/color'
+import Point from '@/classes/point'
+import Layer from '@/classes/layer'
+
 import u from '@/utils'
 
-import { CanvasType, PointType } from '@/types'
-
 class Animation extends Canvas {
-  point: PointType
   angle: number
   maxTurn: number
+  layerIndex: number
   strokeIndex: number
-  pointIndex: number
 
-  constructor(canvas: CanvasType) {
-    super(canvas)
-    this.point = { ...canvas.center }
+  constructor(args:any) {
+    super(args)
+
     this.angle = this.randomAngle()
     this.maxTurn = 10
+    this.layerIndex = 0
     this.strokeIndex = 0
-    this.pointIndex = 0
 
-    const stroke:Stroke = new Stroke(this.canvas)
-    stroke.setLightness()
-    this.strokes = [ stroke ]
+    const stroke:Stroke = new Stroke({
+      color: new Color(this.color),
+      points: [ new Point(this.center), new Point(this.center) ]
+    })
+    stroke.color.l = 100
+    this.layers = [
+      new Layer({ strokes: [ stroke ] })
+    ]
   }
 
   randomAngle() {
@@ -29,16 +35,15 @@ class Animation extends Canvas {
   }
 
   turn() {
-    const { center, margin } = this.canvas
-    const { x, y } = this.strokes[this.strokeIndex].points[this.pointIndex]
+    const [ start, end ] = this.layers[this.layerIndex].strokes[this.strokeIndex].points
 
     const distanceFromEdge:any = {
-      x: u.distance(center.x - margin, u.distance(center.x, x)),
-      y: u.distance(center.y - margin, u.distance(center.y, y)),
+      x: u.distance(this.center.x - this.margin, u.distance(this.center.x, end.x)),
+      y: u.distance(this.center.y - this.margin, u.distance(this.center.y, end.y)),
     }
 
     const ratio = (axis:'x'|'y') => {
-      return 1 - (distanceFromEdge[axis] / (center[axis] - margin))
+      return 1 - (distanceFromEdge[axis] / (this.center[axis] - this.margin))
     }
 
     const angle = ratio(distanceFromEdge.x < distanceFromEdge.y ? 'x' : 'y') * this.maxTurn
@@ -47,40 +52,42 @@ class Animation extends Canvas {
   }
 
   render() {
-    const { box, margin } = this.canvas
-
-    const current:Stroke = this.strokes[this.strokeIndex]
-    const point = current.points[this.pointIndex]
+    const { strokes } = this.layers[this.layerIndex]
+    const { points: [ start, end ], color, width } = strokes[this.strokeIndex]
 
     const r = 12
     const a = this.angle + this.turn()
 
-    const x = point.x + (r * Math.sin(a))
-    const y = point.y + (r * Math.cos(a))
+    const point = new Point({
+      x: end.x + (r * Math.sin(a)),
+      y: end.y + (r * Math.cos(a))
+    })
 
-    this.ctx.strokeStyle = current.getHSL()
-    this.ctx.lineWidth = 1
-    this.ctx.beginPath()
-    this.ctx.moveTo(point.x, point.y)
-    this.ctx.lineTo(x,y)
-    this.ctx.stroke()
+    const stroke = new Stroke({
+      color: new Color(color),
+      width,
+      points: [
+        new Point(end),
+        point,
+      ]
+    })
 
+    this.layers[this.layerIndex].strokes.push(stroke)
     this.angle = a
-    this.strokes[this.strokeIndex].points.push({ x, y })
-    this.pointIndex += 1
+    this.strokeIndex += 1
+    this.redraw()
 
-    if (y > margin && x > margin && y < box.h - margin && x < box.w - margin) {
+    if (point.y > this.margin && point.x > this.margin && point.y < this.height - this.margin && point.x < this.width - this.margin) {
       this.animate = u.requestInterval(30, () => this.render())
     } else {
       this.animate.cancel()
-      this.redraw()
-
-      const stroke:Stroke = new Stroke(this.canvas)
-      stroke.setLightness()
-
-      this.strokes.push(stroke)
-      this.strokeIndex += 1
-      this.pointIndex = 0
+      stroke.points = [
+        new Point(this.center),
+        new Point(this.center)
+      ]
+      this.layers.push(new Layer({ strokes: [ stroke ] }))
+      this.layerIndex += 1
+      this.strokeIndex = 0
       this.angle = this.randomAngle()
       this.render()
     }

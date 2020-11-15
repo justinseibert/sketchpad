@@ -1,25 +1,21 @@
-import { CanvasType, ColorType, PointType } from '@/types'
+import Color from './color'
+import Point from './point'
+
+interface IStroke {
+  color: Color
+  points: Point[]
+  width: number
+}
 
 class Stroke {
-  color: ColorType
-  points: PointType[]
+  color: Color
+  points: Point[]
+  width: number
 
-  constructor(canvas: CanvasType) {
-    this.color = { ...canvas.background }
-    this.points = [
-      { ...canvas.center }
-    ]
-  }
-
-  setLightness(value:number=100) {
-    this.color = {
-      ...this.color,
-      l: value
-    }
-  }
-
-  getHSL() {
-    return `hsl(${this.color.h}, ${this.color.s}%, ${this.color.l}%)`
+  constructor(args:Partial<IStroke>) {
+    this.color = args.color || new Color({})
+    this.points = args.points || [ new Point({}), new Point({}) ]
+    this.width = args.width || 1
   }
 }
 
