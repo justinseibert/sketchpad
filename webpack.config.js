@@ -35,6 +35,9 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
   ],
   resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
     extensions: [ '.ts', '.js' ],
   },
   output: {
