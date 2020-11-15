@@ -32,7 +32,7 @@ class Canvas {
     this.dpi = 2
     this.height = window.innerHeight
     this.layers = [] as Layer[]
-    this.margin = 0
+    this.margin = -3
     this.width = window.innerWidth
   }
 
@@ -51,6 +51,7 @@ class Canvas {
 
     this.layers.forEach((layer:Layer) => {
       layer.strokes.forEach((stroke:Stroke) => {
+        this.ctx.lineCap = stroke.cap
         this.ctx.lineWidth = stroke.width
         this.ctx.strokeStyle = stroke.color.toString()
         this.ctx.beginPath()
@@ -65,37 +66,6 @@ class Canvas {
       })
     })
   }
-  // redraw() {
-  //   this.ctx.clearRect(0, 0, this.width, this.height)
-  //
-  //   this.layers.forEach((layer:Layer) => {
-  //     layer.strokes.forEach((stroke:Stroke))
-  //     item.color.l -= 3
-  //     if (item.color.l <= background.l) {
-  //       return result
-  //     }
-  //
-  //     this.ctx.lineWidth = item.color.l / 100
-  //     this.ctx.strokeStyle = `hsl(${background.h}, ${background.s}%, ${item.color.l}%)`
-  //     this.ctx.beginPath()
-  //     this.ctx.moveTo(item.points[0].x, item.points[0].y)
-  //
-  //     const points = [ ...item.points ]
-  //     points.shift()
-  //     points.forEach(({ x, y }:PointType) => {
-  //       this.ctx.lineTo(x,y)
-  //     })
-  //     this.ctx.stroke()
-  //
-  //     return [
-  //       ...result,
-  //       item
-  //     ]
-  //   }, [])
-  //
-  //   this.strokes = strokes
-  //   console.log(this.strokes)
-  // }
 }
 
 export default Canvas

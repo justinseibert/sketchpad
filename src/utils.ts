@@ -17,12 +17,17 @@ const between = (min:number, max:number) => {
 
 // the absolute distance/length between a and b
 const distance = (a:number, b:number) => {
-  return Math.abs(b-a);
+  return Math.abs(b-a)
+}
+
+// direction
+const direction = (from:number, to:number) => {
+  return Math.sign(to - from)
 }
 
 // determine hypotenuse length of triangle
 const hypotenuse = (sideA:number,sideB:number) => {
-  return Math.sqrt(sideA*sideA + sideB*sideB);
+  return Math.sqrt(sideA*sideA + sideB*sideB)
 }
 
 // find the radian angle between two points
@@ -67,6 +72,7 @@ export default {
   chance,
   degree,
   degreeBetween,
+  direction,
   distance,
   hypotenuse,
   radian,
