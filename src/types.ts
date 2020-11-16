@@ -29,6 +29,17 @@ export interface CanvasType {
   background: ColorType
 }
 
+export interface IHeading {
+  turn: number
+  duration: number
+  off?: boolean
+}
+
+export interface ILetter {
+  character: string
+  headings: IHeading[]
+}
+
 export interface IntervalType {
   cancel: () => void
 }

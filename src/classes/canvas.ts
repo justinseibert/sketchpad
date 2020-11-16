@@ -66,6 +66,21 @@ class Canvas {
       })
     })
   }
+
+  interval(interval:number, callback: () => void) {
+    let start = Date.now(),
+        cancel = false
+
+    const onInterval = () => {
+      cancel || Date.now() - start > interval ? callback() : window.requestAnimationFrame(onInterval)
+    }
+
+    window.requestAnimationFrame(onInterval)
+
+    return {
+      cancel: () => cancel = true
+    }
+  }
 }
 
 export default Canvas
