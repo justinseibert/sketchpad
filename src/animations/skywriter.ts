@@ -4,7 +4,8 @@ import Color from '@/classes/color'
 import Point from '@/classes/point'
 import Layer from '@/classes/layer'
 
-import u from '@/utils'
+import { between, chance } from '@/utils/math'
+import { radian, distance } from '@/utils/geometry'
 
 class Animation extends Canvas {
   direction: number
@@ -34,15 +35,15 @@ class Animation extends Canvas {
   }
 
   randomAngle() {
-    return u.radian(u.between(-180, 180))
+    return radian(between(-180, 180))
   }
 
   turn() {
     const { points: [ _, end ] } = this.layers[this.layerIndex].strokes[this.strokeIndex]
 
     const distanceFromEdge:any = {
-      x: u.distance(this.center.x - this.margin, u.distance(this.center.x, end.x)),
-      y: u.distance(this.center.y - this.margin, u.distance(this.center.y, end.y)),
+      x: distance(this.center.x - this.margin, distance(this.center.x, end.x)),
+      y: distance(this.center.y - this.margin, distance(this.center.y, end.y)),
     }
 
     const ratio = (axis:'x'|'y') => {
@@ -51,9 +52,9 @@ class Animation extends Canvas {
 
     const axis = distanceFromEdge.x < distanceFromEdge.y ? 'x' : 'y'
     const nearest = ratio(axis)
-    const angle = u.radian(u.between(0, nearest * this.maxTurn))
+    const angle = radian(between(0, nearest * this.maxTurn))
 
-    if (nearest > 0.9 && u.chance(0.1).bool) {
+    if (nearest > 0.9 && chance(0.1).bool) {
       this.direction *= -1
     }
     return angle * this.direction
@@ -111,7 +112,7 @@ class Animation extends Canvas {
     this.redraw()
 
     if (point.y > this.margin && point.x > this.margin && point.y < this.height - this.margin && point.x < this.width - this.margin) {
-      this.animate = u.requestInterval(30, () => this.render())
+      this.animate = this.interval(30, () => this.render())
     } else {
       this.animate.cancel()
       const translation = { ...point }

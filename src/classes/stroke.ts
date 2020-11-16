@@ -1,7 +1,7 @@
 import Color from './color'
 import Point from './point'
 
-import u from '@/utils'
+import { radianBetween, direction } from '@/utils/geometry'
 
 type TCap = 'butt' | 'round' | 'square'
 
@@ -28,9 +28,9 @@ class Stroke {
   get vector() {
     const [ a, b ] = this.points
     return {
-      a: u.radianBetween(a, b),
-      x: u.direction(a.x, b.x),
-      y: u.direction(a.y, b.y),
+      a: radianBetween(a, b),
+      x: direction(a.x, b.x),
+      y: direction(b.y, a.y),
     }
   }
 }
