@@ -80,7 +80,7 @@ class Animation extends Canvas {
         const stroke = new Stroke({
           color: new Color(color),
           points,
-          width: 2
+          width: heading.off ? 1 : 2
         })
         strokes.push(stroke)
         start = end
