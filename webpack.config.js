@@ -7,13 +7,15 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 3000,
+    hot: true,
   },
   devtool: 'inline-source-map',
+  mode: 'development',
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: [ 'ts-loader' ],
+        use: 'ts-loader',
         exclude: /node_modules/,
       },
       {
@@ -27,21 +29,23 @@ module.exports = {
       },
     ],
   },
+  output: {
+    filename: 'bundle.js',
+    library: {
+      name: 'App',
+      type: 'umd',
+      export: 'default',
+    },
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '',
+  },
   plugins: [
     new htmlWebpackPlugin({
       inject: false,
       template: path.resolve(__dirname, 'public/index.html'),
     }),
-    new webpack.HotModuleReplacementPlugin(),
   ],
   resolve: {
     extensions: [ '.ts', '.js' ],
-  },
-  output: {
-    filename: 'main.js',
-    library: 'App',
-    libraryExport: 'default',
-    libraryTarget: 'umd',
-    path: path.resolve(__dirname, 'dist'),
   },
 }
