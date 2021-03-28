@@ -1,13 +1,16 @@
-import './styles/main.scss'
+import 'src/styles/main.scss'
+
+import Canvas from 'src/models/canvas'
 
 class App {
-  elem: HTMLElement
-  constructor(el: HTMLElement){
-    this.elem = el
+  el: HTMLCanvasElement
+  constructor(el: HTMLCanvasElement){
+    this.el = el
   }
 
   init() {
-    this.elem.innerHTML = `hey world`
+    const canvas = new Canvas(this.el)
+    canvas.init()
   }
 }
 
