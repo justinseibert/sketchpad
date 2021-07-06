@@ -21,8 +21,10 @@ export const direction = (from: number, to: number) => {
 }
 
 // determine hypotenuse length of triangle
-export const hypotenuse = (sideA: number, sideB: number) => {
-  return Math.sqrt(sideA*sideA + sideB*sideB)
+export const hypotenuse = (a: Point, b: Point) => {
+  const A = a.x - b.x
+  const B = a.y - b.y
+  return Math.sqrt(A**2 + B**2)
 }
 
 // find the radian angle between two points
@@ -34,4 +36,22 @@ export const radianBetween = (a: Point, b: Point) => {
 export const degreeBetween = (a: Point, b: Point) => {
   const radian = radianBetween(a,b)
   return degree(radian)
+}
+
+// rotate a point around some origin
+export const rotatePoint = (origin: Point | null, point: Point, radian: number) => {
+  if (!origin) {
+    origin = new Point(0,0)
+  }
+
+  // translate point by the origin
+  const { x, y } = new Point(
+    point.x - origin.x,
+    point.y - origin.y,
+  )
+
+  return {
+    x: (x * Math.cos(radian) - y * Math.sin(radian)) + origin.x,
+    y: (y * Math.cos(radian) + x * Math.sin(radian)) + origin.y,
+  }
 }

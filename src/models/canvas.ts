@@ -12,10 +12,10 @@ class Canvas {
   width: number
 
   constructor(el: HTMLCanvasElement) {
-    this.center = new Point({
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
-    })
+    this.center = new Point(
+      window.innerWidth / 2,
+      window.innerHeight / 2
+    )
     this.color = new Color({
       h: 30,
       s: 7,

@@ -2,9 +2,9 @@ class Point {
   x: number
   y: number
 
-  constructor(args: Partial<Point>) {
-    this.x = args.x || 0
-    this.y = args.y || 0
+  constructor(x: number, y: number) {
+    this.x = x
+    this.y = y
   }
 }
 
