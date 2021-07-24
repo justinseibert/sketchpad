@@ -1,4 +1,3 @@
-import Color from 'src/models/color'
 import Point from 'src/models/point'
 
 import { CanvasOptions } from 'src/types/canvas'
@@ -14,10 +13,10 @@ class Canvas {
   constructor(el: HTMLCanvasElement, options: CanvasOptions) {
     this.height = options.height || window.innerHeight
     this.width = options.width || window.innerWidth
-    this.center = new Point({
-      x: this.width / 2,
-      y: this.height / 2,
-    })
+    this.center = new Point(
+      this.width / 2,
+      this.height / 2,
+    )
 
     this.el = el
     this.ctx = el.getContext('2d')
