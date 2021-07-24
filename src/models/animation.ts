@@ -9,7 +9,7 @@ class Animation {
     this.step = step
   }
 
-  start() {
+  public start() {
     const getFrame = () => {
       let start = Date.now()
 
@@ -33,11 +33,11 @@ class Animation {
     getFrame()
   }
 
-  stop() {
+  public stop() {
     this.isActive = false
   }
 
-  animate(shouldRun: boolean) {
+  public animate(shouldRun: boolean) {
     if (shouldRun) {
       this.start()
     } else {
