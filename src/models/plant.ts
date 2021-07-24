@@ -2,21 +2,19 @@ import Point from 'src/models/point'
 import Node from 'src/models/node'
 import Canvas from 'src/models/canvas'
 
-import { between, chance } from 'src/utils/math'
+import { between } from 'src/utils/math'
 
-import { CanvasOptions } from 'src/types/canvas'
-
-class Plant extends Canvas {
+class Plant {
+    canvas: Canvas
     nodes: Node
 
-    constructor(el: HTMLCanvasElement, options: CanvasOptions) {
-        super(el, options)
-        
+    constructor(canvas: Canvas) {
         const stem = new Point(
-            this.center.x,
-            this.height,
+            canvas.center.x,
+            canvas.height,
         )
         this.nodes = new Node(stem)
+        this.canvas = canvas
     }
 
     private _determineNext(nodes: Node[]) {
@@ -39,15 +37,16 @@ class Plant extends Canvas {
     }
 
     public grow() {
+        const { ctx } = this.canvas
         let node = this._traverseStem()
-        this.ctx.strokeStyle = 'rgba(255,255,255,0.08)'
-        this.ctx.lineWidth = 1
-        this.ctx.lineCap = 'round'
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'
+        ctx.lineWidth = 1
+        ctx.lineCap = 'round'
         while (node.parent) {
-            this.ctx.beginPath()
-            this.ctx.moveTo(node.origin.x, node.origin.y)
-            this.ctx.lineTo(node.parent.origin.x, node.parent.origin.y)
-            this.ctx.stroke()
+            ctx.beginPath()
+            ctx.moveTo(node.origin.x, node.origin.y)
+            ctx.lineTo(node.parent.origin.x, node.parent.origin.y)
+            ctx.stroke()
             node = node.parent
         }
     }

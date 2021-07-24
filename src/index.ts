@@ -1,5 +1,6 @@
 import 'src/styles/main.scss'
 
+import Canvas from 'src/models/canvas'
 import Plant from 'src/models/plant'
 import Animation from 'src/models/animation'
 
@@ -11,8 +12,8 @@ class App {
 
   init() {
     let animate = true
-    const plant = new Plant(this.el, { width: 500, height: 500 })
-    console.log(plant)
+    const canvas = new Canvas(this.el, { width: 500, height: 500 })
+    const plant = new Plant(canvas)
     const growth = new Animation(() => plant.grow(), 60)
 
     window.addEventListener('click', () => {
