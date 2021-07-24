@@ -12,6 +12,9 @@ body,
 }
 
 body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 100%;
   color: var(--text);
   background: var(--body);
@@ -65,4 +68,8 @@ hr {
   margin: space(medium) 0;
   border: none;
   overflow: hidden;
+}
+
+canvas {
+  box-shadow: 0 0 0 1px var(--border);
 }
