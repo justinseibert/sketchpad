@@ -1,35 +1,32 @@
 import Color from 'src/models/color'
 import Point from 'src/models/point'
 
+import { CanvasOptions } from 'src/types/canvas'
+
 class Canvas {
   ctx: CanvasRenderingContext2D
   dpi: number
   el: HTMLCanvasElement
-  margin: number
   center: Point
-  color: Color
   height: number
   width: number
 
-  constructor(el: HTMLCanvasElement) {
+  constructor(el: HTMLCanvasElement, options: CanvasOptions) {
+    this.height = options.height || window.innerHeight
+    this.width = options.width || window.innerWidth
     this.center = new Point({
-      x: window.innerWidth / 2,
-      y: window.innerHeight / 2,
+      x: this.width / 2,
+      y: this.height / 2,
     })
-    this.color = new Color({
-      h: 30,
-      s: 7,
-      l: 17
-    })
+
     this.el = el
     this.ctx = el.getContext('2d')
-    this.dpi = 2
-    this.height = window.innerHeight
-    this.margin = -3
-    this.width = window.innerWidth
+    this.dpi = options.dpi || 2
+
+    this._init()
   }
 
-  init() {
+  private _init() {
     this.el.width = this.width * this.dpi
     this.el.height = this.height * this.dpi
     this.el.style.width = `${this.width}px`

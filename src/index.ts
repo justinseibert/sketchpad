@@ -9,8 +9,7 @@ class App {
   }
 
   init() {
-    const canvas = new Canvas(this.el)
-    canvas.init()
+    const canvas = new Canvas(this.el, {})
   }
 }
 
