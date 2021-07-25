@@ -1,6 +1,6 @@
 # Worn Path
 
-Draws a tree of branching child nodes extending from an origin point. Pathways leading to the parent origin gain opacity based on popularity of the route.
+Draws a tree of branching child nodes extending from an origin point. Pathways leading to the parent origin gain opacity based on popularity of the route. Route popularity is determined by a weighted probability between current nodes child branches.
 
 **Status:** Working
 

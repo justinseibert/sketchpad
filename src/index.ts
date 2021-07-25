@@ -14,10 +14,9 @@ class App {
     let animate = true
     const canvas = new Canvas(this.el, { width: 500, height: 500 })
     const plant = new Plant(canvas)
-    const growth = new Animation(() => plant.grow(), 60)
+    const growth = new Animation(() => plant.grow(), 3000)
 
-    window.addEventListener('click', () => {
-      console.log('animate', animate)
+    this.el.addEventListener('click', () => {
       growth.animate(animate)
       animate = !animate
     })

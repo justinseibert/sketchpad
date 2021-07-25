@@ -1,18 +1,22 @@
+import { random, orderBy } from 'lodash'
+
 import Point from 'src/models/point'
 
 import { radian, radianBetween } from 'src/utils/geometry'
-import { between, chance } from 'src/utils/math'
+import { chance } from 'src/utils/math'
 
 class Node {
     parent: Node | null
     children: Node[]
     origin: Point
     angle: number
+    weight: number
 
     constructor(origin: Point, parent: Node | null = null) {
         this.parent = parent
         this.origin = origin
         this.children = []
+        this.weight = 0
         if (parent) {
             this.angle = radianBetween(parent.origin, origin)
         } else {
@@ -21,7 +25,7 @@ class Node {
     }
 
     private _randomTurn() {
-        const angle = radian(between(0, 60))
+        const angle = radian(random(0, 80))
         const direction = chance().num
 
         return angle * direction
@@ -29,7 +33,7 @@ class Node {
 
     public addChild() {
         const angle = this._randomTurn()
-        const radius = between(10,50)
+        const radius = random(10,20)
 
         const point = new Point(
             this.origin.x - (radius * Math.sin(angle)),
@@ -39,6 +43,11 @@ class Node {
         const child = new Node(point, this)
         this.children.push(child)
         return child
+    }
+
+    public addWeight() {
+        this.weight += 1
+        this.parent.children = orderBy(this.parent.children, 'weight', 'desc')
     }
 }
 
