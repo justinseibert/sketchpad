@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": false,
     "module": "es6",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "./dist/",
     "sourceMap": true,
