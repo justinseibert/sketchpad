@@ -1,7 +1,8 @@
-import { sumBy, random } from 'lodash'
+import { minBy, sumBy, random } from 'lodash'
 
 import Point from 'src/models/point'
 import Node from 'src/models/node'
+import Sun from 'src/models/sun'
 import Canvas from 'src/models/canvas'
 
 import { chance } from 'src/utils/math'
@@ -9,14 +10,16 @@ import { chance } from 'src/utils/math'
 class Plant {
     canvas: Canvas
     nodeTree: Node
+    sun: Sun
 
-    constructor(canvas: Canvas) {
+    constructor(canvas: Canvas, sun: Sun) {
         const stem = new Point(
             canvas.center.x,
             canvas.height,
         )
         this.nodeTree = new Node(stem)
         this.canvas = canvas
+        this.sun = sun
     }
 
     private _addStem() {
@@ -24,14 +27,13 @@ class Plant {
         let node = this.nodeTree
         while (isTraversing) {
             if (node.children.length < 4) {
-                node = node.addChild()
+                node = node.addChild(this.sun.position)
                 isTraversing = false
             } else {
-                const weightSum = sumBy(node.children, 'weight')
-                const index = node.children.findIndex((child: Node) => {
-                    return chance(child.weight / weightSum).bool
+                // find child node closest to sun
+                node = minBy(node.children, (child: Node) => {
+                    return child.origin.distanceFrom(this.sun.position)
                 })
-                node = node.children[index > -1 ? index : 0]
             }
         }
         return node
@@ -39,9 +41,9 @@ class Plant {
 
     public grow() {
         const { ctx } = this.canvas
-        ctx.strokeStyle = 'rgba(255,255,255,0.08)'
         ctx.lineWidth = 1
         ctx.lineCap = 'round'
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'
         
         let node = this._addStem()
         while (node.parent) {
