@@ -35,7 +35,7 @@ class Node {
     public addChild(sun: Sun) {
         const jitter = this._randomTurn(40)
         const angle = radianBetween(this.origin, sun.position) + jitter
-        const radius = random(10,20)
+        const radius = random(5,50)
 
         const point = new Point(
             this.origin.x + (radius * Math.cos(angle)),
@@ -43,7 +43,7 @@ class Node {
         )
 
         const distance = point.distanceFrom(sun.position)
-        if (distance < radius + sun.radius) {
+        if (distance < radius + sun.radius + sun.margin) {
             return null
         }
 
