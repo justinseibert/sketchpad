@@ -34,6 +34,10 @@ class Canvas {
     this.ctx.scale(this.dpi,this.dpi)
     this.ctx.save()
   }
+
+  public clear() {
+    this.ctx.clearRect(0,0,this.width, this.height)
+  }
 }
 
 export default Canvas
