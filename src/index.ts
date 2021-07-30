@@ -12,11 +12,6 @@ class App {
   init() {
     const metaball = new Metaball(this.el, { width: 500, height: 500 })
     const intruder = new Circle(-40,-40,40)
-    
-    const boundary = 30
-    metaball.primary.threshold = boundary
-    intruder.threshold = boundary
-
     metaball.render(intruder)
 
     this.el.style.cursor = 'none'

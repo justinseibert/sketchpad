@@ -1,6 +1,6 @@
 import Canvas from 'src/models/canvas'
 import Circle from 'src/models/circle'
-import Point from 'src/models/point'
+import Arc from 'src/models/arc'
 
 import { radian } from 'src/utils/geometry'
 
@@ -15,97 +15,60 @@ class Metaball extends Canvas {
         this.primary = new Circle(
             this.center.y,
             this.center.x,
-            100
+            50
         )
     }
 
     public render(intruder: Circle) {
         this.clear()
         const r360 = radian(360)
+        const threshold = 50
 
-        // circle bounds
         this.ctx.strokeStyle = '#ddd'
         this.ctx.fillStyle = '#ddd'
-        this.ctx.beginPath()
-        this.ctx.arc(
-            this.primary.center.x,
-            this.primary.center.y,
-            this.primary.radius,
-            0,
-            r360
-        )
-        this.ctx.stroke()
-        
-        this.ctx.beginPath()
-        this.ctx.arc(
-            intruder.center.x,
-            intruder.center.y,
-            intruder.radius,
-            0,
-            r360
-        )
-        this.ctx.stroke()
 
-        // helper visuals
-        this.ctx.strokeStyle = '#666'
-        this.ctx.fillStyle = '#666'
+        let anticlock = true
+        const metaball = intruder.getMetaball(this.primary, threshold)
         
-        // boundaries
-        this.ctx.beginPath()
-        this.ctx.arc(
-            this.primary.center.x,
-            this.primary.center.y,
-            this.primary.boundary,
-            0,
-            r360
-        )
-        this.ctx.stroke()
-        
-        this.ctx.beginPath()
-        this.ctx.arc(
-            intruder.center.x,
-            intruder.center.y,
-            intruder.boundary,
-            0,
-            r360
-        )
-        this.ctx.stroke()
-                
-        // circle boundary intersections
-        this.primary.intersectionsWith(intruder).forEach((point: Point) => {
+        if (metaball.length < 4) {
             this.ctx.beginPath()
             this.ctx.arc(
-                point.x,
-                point.y,
-                this.primary.threshold,
+                this.primary.center.x,
+                this.primary.center.y,
+                this.primary.radius,
                 0,
                 r360
             )
-            this.ctx.fill()
+            this.ctx.stroke()
+
+            this.ctx.beginPath()
+            this.ctx.arc(
+                intruder.center.x,
+                intruder.center.y,
+                intruder.radius,
+                0,
+                r360
+            )
+            this.ctx.stroke()
+            
+            return
+        }
+        
+        metaball.forEach((arc:Arc) => {
+            this.ctx.save()
+            this.ctx.beginPath()
+            this.ctx.arc(
+                arc.center.x,
+                arc.center.y,
+                arc.radius,
+                arc.startAngle,
+                arc.endAngle,
+                anticlock,
+            )
+            this.ctx.stroke()
+            this.ctx.restore()
+            anticlock = !anticlock
         })
-
-        // circle 
-
-        // circle centers
-        this.ctx.beginPath()
-        this.ctx.arc(
-            this.primary.center.x,
-            this.primary.center.y,
-            2,
-            0,
-            r360
-        )
-        this.ctx.fill()
-
-        this.ctx.beginPath()
-        this.ctx.arc(
-            intruder.center.x,
-            intruder.center.y,
-            2,
-            0,
-            r360
-        )
-        this.ctx.fill()
     }
 }
 

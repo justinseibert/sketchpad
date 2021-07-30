@@ -12,6 +12,10 @@ class Point {
     const dy = Math.abs(point.y - this.y)
     return Math.sqrt(dx ** 2 + dy ** 2)
   }
+
+  public radianTo(point: Point) {
+    return Math.atan2(point.y - this.y, point.x - this.x)
+  }
 }
 
 export default Point

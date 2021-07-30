@@ -1,8 +1,8 @@
 # Metaball
 
-Demonstrates intersection points of two circles.
+Draws single, continuous metaball arc between two intersecting circles.
 
-**Status**: Working (Demo with visual guides)
+**Status**: Working
 
 ### Steps
 

@@ -1,4 +1,5 @@
 import Point from 'src/models/point'
+import Arc from './arc'
 
 class Circle {
     center: Point
@@ -17,8 +18,8 @@ class Circle {
         return this.radius + this.threshold
     }
 
-    public intersectionsWith(other: Circle) {
-        if (!this.doesIntersectWith(other)) {
+    public intersectionsWith(other: Circle, threshold: number = 0) {
+        if (!this.doesIntersectWith(other, threshold)) {
             return []
         }
 
@@ -28,27 +29,30 @@ class Circle {
         const x = (this.boundary**2 - other.boundary**2 + this.distance**2) / (2 * this.distance)
         const y = Math.sqrt(this.boundary**2 - x**2)
 
-        const p1 = new Point(
+        const clock = new Point(
             this.center.x + x * dx - y * dy,
             this.center.y + x * dy + y * dx
         )
 
         if (this.distance === this.boundary + other.boundary) {
-            return [ p1 ]
+            return [ clock ]
         }
 
-        const p2 = new Point(
+        const anticlock = new Point(
             this.center.x + x * dx + y * dy,
             this.center.y + x * dy - y * dx
         )
 
         return [
-            p1,
-            p2,
+            clock,
+            anticlock,
         ]
     }
 
-    public doesIntersectWith(other: Circle) {
+    public doesIntersectWith(other: Circle, threshold: number = 0) {
+        this.threshold = threshold
+        other.threshold = threshold
+
         this.distance = this.center.distanceFrom(other.center)
         
         if (this.distance > this.boundary + other.boundary || this.distance < Math.abs(this.boundary - other.boundary)) {
@@ -56,6 +60,72 @@ class Circle {
         }
         
         return true
+    }
+
+    public getMetaball(other: Circle, threshold: number = 0) {
+        // order points by clock -> anticlock -> clock -> anticlock
+        const touchCenters = this.intersectionsWith(other, threshold)
+        if (touchCenters.length < 2) {
+            // not touching, not connected
+            return []
+        }
+
+        const radius = threshold + 0.001
+        const touchCircles = touchCenters.map((point: Point) => {
+            return new Circle(point.x, point.y, radius)
+        })
+
+        if (touchCircles[0].doesIntersectWith(touchCircles[1])) {
+            // preemptive phase (touching boundaries, but not connected)
+            return []
+        }
+
+        // connected phase
+        const mergePoints = touchCircles.map((circle: Circle, index: number) => {
+            const otherPoint = circle.intersectionsWith(other)[0]
+            const thisPoint = circle.intersectionsWith(this)[0]
+
+            if (index === 0) {
+                return {
+                    start: otherPoint,
+                    end: thisPoint,
+                }
+            } else {
+                return {
+                    start: thisPoint,
+                    end: otherPoint,
+                }
+            }
+        })
+
+        return [
+            new Arc(
+                touchCenters[0],
+                mergePoints[0].start,
+                mergePoints[0].end,
+                radius,
+            ),
+            new Arc(
+                this.center,
+                mergePoints[0].end,
+                mergePoints[1].start,
+                this.radius,
+            ),
+            new Arc(
+                touchCenters[1],
+                mergePoints[1].start,
+                mergePoints[1].end,
+                radius,
+            ),
+            new Arc(
+                other.center,
+                mergePoints[1].end,
+                mergePoints[0].start,
+                other.radius,
+            )
+        ]
+
+
     }
 }
 
