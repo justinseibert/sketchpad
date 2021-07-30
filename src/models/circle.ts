@@ -55,7 +55,7 @@ class Circle {
 
         this.distance = this.center.distanceFrom(other.center)
         
-        if (this.distance > this.boundary + other.boundary || this.distance < Math.abs(this.boundary - other.boundary)) {
+        if (this.distance >= this.boundary + other.boundary || this.distance <= Math.abs(this.boundary - other.boundary)) {
             return false
         }
         
@@ -67,7 +67,10 @@ class Circle {
         const touchCenters = this.intersectionsWith(other, threshold)
         if (touchCenters.length < 2) {
             // not touching, not connected
-            return []
+            return {
+                preemptivePhase: true,
+                arcs: []
+            }
         }
 
         const radius = threshold + 0.001
@@ -75,16 +78,12 @@ class Circle {
             return new Circle(point.x, point.y, radius)
         })
 
-        if (touchCircles[0].doesIntersectWith(touchCircles[1])) {
-            // preemptive phase (touching boundaries, but not connected)
-            return []
-        }
-
+        
         // connected phase
         const mergePoints = touchCircles.map((circle: Circle, index: number) => {
             const otherPoint = circle.intersectionsWith(other)[0]
             const thisPoint = circle.intersectionsWith(this)[0]
-
+            
             if (index === 0) {
                 return {
                     start: otherPoint,
@@ -98,32 +97,82 @@ class Circle {
             }
         })
 
-        return [
-            new Arc(
-                touchCenters[0],
-                mergePoints[0].start,
-                mergePoints[0].end,
-                radius,
-            ),
-            new Arc(
-                this.center,
-                mergePoints[0].end,
-                mergePoints[1].start,
-                this.radius,
-            ),
-            new Arc(
-                touchCenters[1],
-                mergePoints[1].start,
-                mergePoints[1].end,
-                radius,
-            ),
-            new Arc(
-                other.center,
-                mergePoints[1].end,
-                mergePoints[0].start,
-                other.radius,
-            )
-        ]
+        const preemptivePhase = touchCircles[0].doesIntersectWith(touchCircles[1]) && this.distance > this.boundary
+        if (preemptivePhase) {
+            // preemptive phase (touching boundaries, but not connected)
+            const touchPoints = touchCircles[0].intersectionsWith(touchCircles[1])
+            return {
+                preemptivePhase,
+                arcs: [
+                    new Arc(
+                        touchCenters[0],
+                        mergePoints[0].start,
+                        touchPoints[0],
+                        radius,
+                    ),
+                    new Arc(
+                        other.center,
+                        mergePoints[1].end,
+                        mergePoints[0].start,
+                        other.radius,
+                    ),
+                    new Arc(
+                        touchCenters[1],
+                        touchPoints[0],
+                        mergePoints[1].end,
+                        radius,
+                    ),
+                    new Arc(
+                        touchCenters[1],
+                        touchPoints[1],
+                        mergePoints[1].start,
+                        radius,
+                    ),
+                    new Arc(
+                        this.center,
+                        mergePoints[1].start,
+                        mergePoints[0].end,
+                        this.radius,
+                    ),
+                    new Arc(
+                        touchCenters[0],
+                        mergePoints[0].end,
+                        touchPoints[1],
+                        radius,
+                    ),
+                ]
+            }
+        }
+
+        return {
+            preemptivePhase,
+            arcs: [
+                new Arc(
+                    touchCenters[0],
+                    mergePoints[0].start,
+                    mergePoints[0].end,
+                    radius,
+                ),
+                new Arc(
+                    this.center,
+                    mergePoints[0].end,
+                    mergePoints[1].start,
+                    this.radius,
+                ),
+                new Arc(
+                    touchCenters[1],
+                    mergePoints[1].start,
+                    mergePoints[1].end,
+                    radius,
+                ),
+                new Arc(
+                    other.center,
+                    mergePoints[1].end,
+                    mergePoints[0].start,
+                    other.radius,
+                )
+            ]
+        } 
 
 
     }

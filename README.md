@@ -1,8 +1,8 @@
 # Metaball
 
-Draws single, continuous metaball arc between two intersecting circles.
+Draws single, continuous metaball arc between two intersecting circles. Includes pre-emptive smoothing.
 
-**Status**: Working
+**Status**: Working (circle-inside-circle scenario is not managed)
 
 ### Steps
 
