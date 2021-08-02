@@ -1,5 +1,7 @@
 import Point from 'src/models/point'
-import Arc from './arc'
+import Arc from 'src/models/arc'
+
+const R360 = Math.PI * 2
 
 class Circle {
     center: Point
@@ -12,6 +14,17 @@ class Circle {
         this.radius = radius
         this.threshold = 0
         this.distance = 0
+    }
+
+    public get canvasArgs(): [number, number, number, number, number, boolean] {
+        return [
+            this.center.x,
+            this.center.y,
+            this.radius,
+            0,
+            R360,
+            true,
+        ]
     }
 
     public get boundary() {
@@ -60,6 +73,10 @@ class Circle {
         }
         
         return true
+    }
+
+    public isPointInside(point: Point) {
+        return point.distanceFrom(this.center) < this.radius
     }
 
     public getMetaball(other: Circle, threshold: number = 0) {

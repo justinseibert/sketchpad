@@ -1,3 +1,6 @@
+import randomColor from 'randomColor'
+import { random } from 'lodash'
+
 import Canvas from 'src/models/canvas'
 import Circle from 'src/models/circle'
 import Arc from 'src/models/arc'
@@ -8,67 +11,122 @@ import { radian } from 'src/utils/geometry'
 import { CanvasOptions } from 'src/types/canvas'
 
 class Metaball extends Canvas {
-    primary: Circle
+    circles: Circle[]
+    activeIndex: number
+    isMouseDown: boolean
+    mouse: Point
+    colors: string[]
 
     constructor(el: HTMLCanvasElement, options: CanvasOptions) {
         super(el, options)
 
-        this.primary = new Circle(
-            this.center.y,
-            this.center.x,
-            60
-        )
+        this.circles = []
+        for (let i = 0; i < 4; i++) {
+            const r = 40 + (5 * i)
+            const x = random(r, this.width - r)
+            const y = random(r, this.height - r)
+            this.circles.push(new Circle(x,y,r))
+        }
+        this.activeIndex = -1
+        this.isMouseDown = false
+        this.mouse = new Point()
+        
+        this.colors = []
+        for (let i = 0; i < 10; i++) {
+            this.colors.push(randomColor())
+        }
+
+        this.el.addEventListener('mousedown', (event: MouseEvent) => this._handleMouseDown(event))
+        this.el.addEventListener('mouseup', () => this._handleMouseUp())
+        this.el.addEventListener('mousemove', (event: MouseEvent) => this._handleMouseMove(event))
     }
 
-    public render(intruder: Circle) {
-        this.clear()
-        const r360 = radian(360)
-        const threshold = 50
-
-        this.ctx.strokeStyle = '#ddd'
-        this.ctx.fillStyle = '#ddd'
-
-        let anticlock = true
-        const metaball = intruder.getMetaball(this.primary, threshold)
+    private _handleMouseDown(event: MouseEvent) {
+        this.isMouseDown = true
         
-        if (metaball.arcs.length < 3) {
-            this.ctx.beginPath()
-            this.ctx.arc(
-                this.primary.center.x,
-                this.primary.center.y,
-                this.primary.radius,
-                0,
-                r360
-            )
-            this.ctx.stroke()
+        this.mouse.x = event.offsetX
+        this.mouse.y = event.offsetY
 
-            this.ctx.beginPath()
-            this.ctx.arc(
-                intruder.center.x,
-                intruder.center.y,
-                intruder.radius,
-                0,
-                r360
-            )
-            this.ctx.stroke()
-            
+        this.activeIndex = this.circles.findIndex((circle: Circle) => {
+            return circle.isPointInside(this.mouse)
+        })
+    }
+
+    private _handleMouseUp() {
+        this.isMouseDown = false
+        this.activeIndex = null
+
+        this.render()
+    }
+
+    private _handleMouseMove(event: MouseEvent) {
+        if (!this.isMouseDown || this.activeIndex < 0) {
             return
         }
+        this.circles[this.activeIndex].center.x += event.movementX
+        this.circles[this.activeIndex].center.y += event.movementY
         
-        metaball.arcs.forEach((arc:Arc, index: number) => {
-            this.ctx.save()
-            this.ctx.beginPath()
-            this.ctx.arc(
-                arc.center.x, arc.center.y,
-                arc.radius,
-                arc.startAngle, arc.endAngle,
-                // 0, r360,
-                anticlock,
-            )
-            this.ctx.stroke()
-            this.ctx.restore()
+        this.render()
+    }
 
-            anticlock = !anticlock
+    private color(index: number) {
+        if (index > this.colors.length - 1) {
+            this.colors[index] = randomColor({ seed: index })
+        }
+        return this.colors[index]
+    }
+
+    private get clusters(): Circle[][] {
+        const candidates = [ ...this.circles ]
+        // const log = (arr: Circle[]) => {
+        //     console.log(arr.map((c:Circle) => c.radius))
+        // }
+
+        const getCluster = (parent: Circle, subCandidates: Circle[]) => {
+            const intersecting: Circle[] = [ parent ]
+            subCandidates.forEach((subCandidate: Circle, index: number) => {
+                if (parent.doesIntersectWith(subCandidate)) {
+                    const remaining = [ ...subCandidates ]
+                    const subParent = remaining.splice(index, 1)[0]
+                    intersecting.push(...getCluster(subParent, remaining))
+                }
+            })
+            return intersecting
+        }
+
+        const clusters: Circle[][] = []
+        // while (candidates.length) {
+            const parent = candidates.pop()
+            clusters.push(getCluster(parent, candidates))
+        // }
+        return clusters
+    }
+
+    public render() {
+        this.clear()
+        const r360 = radian(360)
+        const threshold = 100
+
+        this.ctx.lineWidth = 1
+        this.ctx.strokeStyle = this.color(0)
+        this.circles.forEach((circle: Circle) => {
+            this.ctx.beginPath()
+            const args = circle.canvasArgs
+            args[2] -= 2
+            this.ctx.arc(...args)
+            this.ctx.stroke()
+
+            this._label(circle.radius, circle.center)
+        })
+
+        this.ctx.lineWidth = 3
+        this.clusters.forEach((cluster: Circle[], index: number) => {
+            this.ctx.strokeStyle = this.color(index + 1)
+            cluster.forEach((circle: Circle) => {
+                this.ctx.beginPath()
+                this.ctx.arc(...circle.canvasArgs)
+                this.ctx.stroke()
+            })
         })
     }
 
