@@ -21,7 +21,7 @@ class Metaball extends Canvas {
         super(el, options)
 
         this.circles = []
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 6; i++) {
             const r = 40 + (5 * i)
             const x = random(r, this.width - r)
             const y = random(r, this.height - r)
@@ -78,19 +78,22 @@ class Metaball extends Canvas {
 
     private get clusters(): Circle[][] {
         const candidates = [ ...this.circles ]
-        // const log = (arr: Circle[]) => {
-        //     console.log(arr.map((c:Circle) => c.radius))
-        // }
+        const log = (arr: Circle[]) => {
+            console.log(arr.map((c:Circle) => c.radius))
+        }
 
         const getCluster = (parent: Circle, subCandidates: Circle[]) => {
             const intersecting: Circle[] = [ parent ]
-            subCandidates.forEach((subCandidate: Circle, index: number) => {
-                if (parent.doesIntersectWith(subCandidate)) {
-                    const remaining = [ ...subCandidates ]
-                    const subParent = remaining.splice(index, 1)[0]
-                    intersecting.push(...getCluster(subParent, remaining))
+            const uncategorized: Circle[] = []
+            while (subCandidates.length) {
+                const latest = subCandidates.pop()
+                if (parent.doesIntersectWith(latest)) {
+                    intersecting.push(...getCluster(latest, [ ...subCandidates, ...uncategorized ]))
+                } else {
+                    uncategorized.push(latest)
                 }
-            })
+            }
+            log(uncategorized)
             return intersecting
         }
 
@@ -119,15 +122,17 @@ class Metaball extends Canvas {
             this._label(circle.radius, circle.center)
         })
 
-        this.ctx.lineWidth = 3
-        this.clusters.forEach((cluster: Circle[], index: number) => {
-            this.ctx.strokeStyle = this.color(index + 1)
-            cluster.forEach((circle: Circle) => {
-                this.ctx.beginPath()
-                this.ctx.arc(...circle.canvasArgs)
-                this.ctx.stroke()
+        if (!this.isMouseDown) {
+            this.ctx.lineWidth = 3
+            this.clusters.forEach((cluster: Circle[], index: number) => {
+                this.ctx.strokeStyle = this.color(index + 1)
+                cluster.forEach((circle: Circle) => {
+                    this.ctx.beginPath()
+                    this.ctx.arc(...circle.canvasArgs)
+                    this.ctx.stroke()
+                })
             })
-        })
+        }
     }
 
     private _label(text: any, position: Point) {
