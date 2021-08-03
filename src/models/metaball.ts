@@ -21,7 +21,8 @@ class Metaball extends Canvas {
         super(el, options)
 
         this.circles = []
-        for (let i = 0; i < 6; i++) {
+        this.colors = []
+        for (let i = 0; i < 10; i++) {
             const r = 40 + (5 * i)
             const x = random(r, this.width - r)
             const y = random(r, this.height - r)
@@ -30,11 +31,6 @@ class Metaball extends Canvas {
         this.activeIndex = -1
         this.isMouseDown = false
         this.mouse = new Point()
-        
-        this.colors = []
-        for (let i = 0; i < 10; i++) {
-            this.colors.push(randomColor())
-        }
 
         this.el.addEventListener('mousedown', (event: MouseEvent) => this._handleMouseDown(event))
         this.el.addEventListener('mouseup', () => this._handleMouseUp())
@@ -71,38 +67,65 @@ class Metaball extends Canvas {
 
     private color(index: number) {
         if (index > this.colors.length - 1) {
-            this.colors[index] = randomColor({ seed: index })
+            this.colors[index] = randomColor({
+                seed: (index + 3) * 256,
+                luminosity: 'light',
+            })
         }
         return this.colors[index]
     }
 
-    private get clusters(): Circle[][] {
-        const candidates = [ ...this.circles ]
-        const log = (arr: Circle[]) => {
-            console.log(arr.map((c:Circle) => c.radius))
-        }
+    private resolveCluster(parent: Circle, candidates: Circle[]) {
+        // determines single cluster from candidate pool
+        const cluster: Circle[] = [ parent ]
+        let remainder: Circle[] = []
 
-        const getCluster = (parent: Circle, subCandidates: Circle[]) => {
-            const intersecting: Circle[] = [ parent ]
-            const uncategorized: Circle[] = []
-            while (subCandidates.length) {
-                const latest = subCandidates.pop()
-                if (parent.doesIntersectWith(latest)) {
-                    intersecting.push(...getCluster(latest, [ ...subCandidates, ...uncategorized ]))
-                } else {
-                    uncategorized.push(latest)
-                }
+        while (candidates.length) {
+            const latest = candidates.pop()
+            if (parent.doesIntersectWith(latest)) {
+                // candidates and remainder are combined
+                // the latest is therefore tested against everything but it's known parents
+                const [ subCluster, subRemainder ] = this.resolveCluster(latest, [ ...candidates, ...remainder ])
+                // add the new subcluster to existing cluster
+                // at the very least, this adds the latest to the cluster
+                cluster.push(...subCluster)
+                // reset the possible candidate pool to only those that were not matched in the subcluster
+                // new pool should be less than or equal to current candidates depending on matches
+                candidates = subRemainder
+                // clear the remainder because we are now testing the same parent against a new candidate pool
+                // ensures we do not duplicate items in the remainder
+                remainder = []
+            } else {
+                // add any circles that do not intersect with current parent from possible candidate pool
+                remainder.push(latest)
             }
-            log(uncategorized)
-            return intersecting
         }
+        // cluster has technically been a comparison of one parent circle to everything else
+        // remainder will include results if something didn't match and be retested by the getter loop
+        return [ cluster, remainder ]
+    }
 
+    private get clusters(): Circle[][] {
+        // gets all clusters from dynamic candidate pool
         const clusters: Circle[][] = []
-        // while (candidates.length) {
+        let candidates = [ ...this.circles ]
+        while (candidates.length) {
+            // test all possible connected circles against one
             const parent = candidates.pop()
-            clusters.push(getCluster(parent, candidates))
-        // }
+            const [ cluster, remainder ] = this.resolveCluster(parent, candidates)
+            clusters.push(cluster)
+            // ignore the circles that were part of the recent cluster
+            // re-run test only againt the remaining
+            candidates = remainder
+        }
         return clusters
+    }
+
+    private label(text: any, position: Point) {
+        this.ctx.save()
+        this.ctx.fillStyle = '#fff'
+        this.ctx.fillText(text.toString(), position.x, position.y)
+        this.ctx.restore()
     }
 
     public render() {
@@ -111,35 +134,14 @@ class Metaball extends Canvas {
         const threshold = 100
 
         this.ctx.lineWidth = 1
-        this.ctx.strokeStyle = this.color(0)
-        this.circles.forEach((circle: Circle) => {
-            this.ctx.beginPath()
-            const args = circle.canvasArgs
-            args[2] -= 2
-            this.ctx.arc(...args)
-            this.ctx.stroke()
-
-            this._label(circle.radius, circle.center)
-        })
-
-        if (!this.isMouseDown) {
-            this.ctx.lineWidth = 3
-            this.clusters.forEach((cluster: Circle[], index: number) => {
-                this.ctx.strokeStyle = this.color(index + 1)
-                cluster.forEach((circle: Circle) => {
-                    this.ctx.beginPath()
-                    this.ctx.arc(...circle.canvasArgs)
-                    this.ctx.stroke()
-                })
+        this.clusters.forEach((cluster: Circle[], index: number) => {
+            this.ctx.strokeStyle = this.color(index + 1)
+            cluster.forEach((circle: Circle) => {
+                this.ctx.beginPath()
+                this.ctx.arc(...circle.canvasArgs)
+                this.ctx.stroke()
             })
-        }
-    }
-
-    private _label(text: any, position: Point) {
-        this.ctx.save()
-        this.ctx.fillStyle = '#fff'
-        this.ctx.fillText(text.toString(), position.x, position.y)
-        this.ctx.restore()
+        })
     }
 }
 
