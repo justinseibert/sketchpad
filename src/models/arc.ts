@@ -5,8 +5,6 @@ class Arc {
     start: Point
     end: Point
     radius: number
-    startAngle: number
-    endAngle: number
 
     constructor(center: Point, start: Point, end: Point, radius?: number) {
         this.center = center
@@ -14,8 +12,25 @@ class Arc {
         this.end = end
 
         this.radius = radius || center.distanceFrom(start)
-        this.startAngle = center.radianTo(start)
-        this.endAngle = center.radianTo(end)
+    }
+
+    public get startAngle(): number {
+        return this.center.radianTo(this.start)
+    }
+
+    public get endAngle(): number {
+        return this.center.radianTo(this.end)
+    }
+
+    public get canvasArgs(): [number, number, number, number, number, boolean] {
+        return [
+            this.center.x,
+            this.center.y,
+            this.radius,
+            this.startAngle,
+            this.endAngle,
+            true,
+        ]
     }
 }
 
