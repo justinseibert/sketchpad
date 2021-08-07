@@ -6,9 +6,12 @@ import Circle from 'src/models/circle'
 import Arc from 'src/models/arc'
 import Point from 'src/models/point'
 
-import { radian } from 'src/utils/geometry'
-
 import { CanvasOptions } from 'src/types/canvas'
+
+interface Intersector {
+    points: Point[],
+    circle: Circle
+}
 
 class Metaball extends Canvas {
     circles: Circle[]
@@ -22,7 +25,7 @@ class Metaball extends Canvas {
 
         this.circles = []
         this.colors = []
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 8; i++) {
             const r = 40 + (5 * i)
             const x = random(r, this.width - r)
             const y = random(r, this.height - r)
@@ -32,12 +35,12 @@ class Metaball extends Canvas {
         this.isMouseDown = false
         this.mouse = new Point()
 
-        this.el.addEventListener('mousedown', (event: MouseEvent) => this._handleMouseDown(event))
-        this.el.addEventListener('mouseup', () => this._handleMouseUp())
-        this.el.addEventListener('mousemove', (event: MouseEvent) => this._handleMouseMove(event))
+        this.el.addEventListener('mousedown', (event: MouseEvent) => this.handleMouseDown(event))
+        this.el.addEventListener('mouseup', () => this.handleMouseUp())
+        this.el.addEventListener('mousemove', (event: MouseEvent) => this.handleMouseMove(event))
     }
 
-    private _handleMouseDown(event: MouseEvent) {
+    private handleMouseDown(event: MouseEvent) {
         this.isMouseDown = true
         
         this.mouse.x = event.offsetX
@@ -48,14 +51,14 @@ class Metaball extends Canvas {
         })
     }
 
-    private _handleMouseUp() {
+    private handleMouseUp() {
         this.isMouseDown = false
         this.activeIndex = null
 
         this.render()
     }
 
-    private _handleMouseMove(event: MouseEvent) {
+    private handleMouseMove(event: MouseEvent) {
         if (!this.isMouseDown || this.activeIndex < 0) {
             return
         }
@@ -121,6 +124,94 @@ class Metaball extends Canvas {
         return clusters
     }
 
+    private firstExterior(intersectors: Intersector[]) {
+        return intersectors.find((current: Intersector, selfIndex: number) => {
+            const [ point ] = current.points
+            const isInteriorPoint = intersectors.findIndex(({ circle }: Intersector, index: number) => {
+                if (index === selfIndex) {
+                    // ignore own circle
+                    return false
+                }
+                // check if the clockwise point is inside of another intersecting circle
+                const isInterior = circle.isPointInside(point)
+                return isInterior
+            }) > -1
+            if (isInteriorPoint) {
+                return false
+            }
+            return true
+        })
+    }
+
+    private smallestClockwiseRotation(parent: Circle, startingPoint: Point, intersectors: Intersector[]) {
+        let intersector = intersectors[0]
+        // console.log(intersectors)
+        let minAngle = parent.center.radianBetween(startingPoint, intersector.points[1], true)
+
+        intersectors.forEach((current: Intersector) => {
+            const angle = parent.center.radianBetween(startingPoint, current.points[1], true)
+            if (angle < minAngle) {
+                // update for smallest known angle
+                minAngle = angle
+                intersector = current
+            }
+        })
+        return intersector
+    }
+
+    private getArcs(parent: Circle, candidates: Circle[], starting: Intersector |  null, closing: Point | null): Arc[] {
+        const arcs: Arc[] = []
+        const intersectors: Intersector[] = []
+
+        // find all the circles that intersect with the current parent
+        candidates.forEach((circle: Circle) => {
+            if (parent.isSimilarTo(circle)) {
+                return
+            }
+            const points = parent.intersectionsWith(circle)
+            if (points.length) {
+                intersectors.push({
+                    points,
+                    circle,
+                })
+            }
+        })
+
+        // return a contained circle if no intersections
+        if (!intersectors.length) {
+            arcs.push(new Arc(
+                parent.center,
+                new Point(parent.center.x + parent.radius, parent.center.y),
+                new Point(parent.center.x + parent.radius, parent.center.y - 0.0001),
+                parent.radius,
+            ))
+            return arcs
+        }
+
+        starting = starting || this.firstExterior(intersectors)
+        const ending = this.smallestClockwiseRotation(parent, starting.points[0], intersectors)
+
+        arcs.push(new Arc(
+            parent.center,
+            starting.points[0],
+            ending.points[1],
+            parent.radius
+        ))
+        
+        if (!closing) {
+            closing = starting.points[0]
+        } else if (closing.isSimilarTo(ending.points[1])) {
+            return arcs
+        }
+        
+        const [ clock, anticlock ] = ending.points
+        ending.points = [ anticlock, clock ]
+
+        arcs.push(...this.getArcs(ending.circle, candidates, ending, closing))
+
+        return arcs
+    }
+
     private label(text: any, position: Point) {
         this.ctx.save()
         this.ctx.fillStyle = '#fff'
@@ -130,17 +221,29 @@ class Metaball extends Canvas {
 
     public render() {
         this.clear()
-        const r360 = radian(360)
-        const threshold = 100
 
         this.ctx.lineWidth = 1
-        this.clusters.forEach((cluster: Circle[], index: number) => {
-            this.ctx.strokeStyle = this.color(index + 1)
-            cluster.forEach((circle: Circle) => {
-                this.ctx.beginPath()
-                this.ctx.arc(...circle.canvasArgs)
-                this.ctx.stroke()
-            })
+        this.ctx.strokeStyle = '#3f3f3f'
+        this.circles.forEach((circle: Circle) => {
+            this.ctx.beginPath()
+            this.ctx.arc(...circle.canvasArgs)
+            this.ctx.stroke()
+        })
+
+        if (this.isMouseDown) {
+            return
+        }
+
+        this.clusters.forEach((cluster: Circle[], i: number) => {
+            this.ctx.strokeStyle = this.color(i + 1)
+            if (cluster.length > 1) {
+                const arcs = this.getArcs(cluster[0], cluster, null, null)
+                arcs.forEach((arc:Arc) => {
+                    this.ctx.beginPath()
+                    this.ctx.arc(...arc.canvasArgs)
+                    this.ctx.stroke()
+                })
+            }
         })
     }
 }
