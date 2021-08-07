@@ -27,6 +27,17 @@ class Circle {
         ]
     }
 
+    public isSimilarTo(circle: Circle, margin: number = 0) {
+        return (
+            this.center.x + margin >= circle.center.x &&
+            this.center.x - margin <= circle.center.x &&
+            this.center.y + margin >= circle.center.y &&
+            this.center.y - margin <= circle.center.y &&
+            this.radius + margin >= circle.radius &&
+            this.radius - margin <= circle.radius
+        )
+    }
+
     public get boundary() {
         return this.radius + this.threshold
     }
