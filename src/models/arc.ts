@@ -1,4 +1,4 @@
-import Point from "./point";
+import Point from 'src/models/point'
 
 class Arc {
     center: Point
@@ -29,7 +29,7 @@ class Arc {
             this.radius,
             this.startAngle,
             this.endAngle,
-            true,
+            false,
         ]
     }
 }
