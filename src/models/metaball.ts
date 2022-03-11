@@ -19,6 +19,8 @@ export interface ClusterOptions {
 	range?: number
 	minCluster?: number
 	showOriginal?: boolean
+	levels?: number
+	spread?: number
 }
 
 class Metaball extends Canvas {
@@ -34,12 +36,16 @@ class Metaball extends Canvas {
 	private _count: number = 0
 	private _minCluster: number = 0
 	private _showOriginal: boolean = true
+	private _levels: number = 1
+	private _spread: number = 1
 
 	constructor(el: HTMLCanvasElement, options: CanvasOptions, clusterOptions: ClusterOptions) {
 		super(el, options)
 
 		this.showOriginal = clusterOptions.showOriginal
 		this.minCluster = clusterOptions.minCluster || 0
+		this.spread = clusterOptions.spread || 1
+		this.levels = clusterOptions.levels || 1
 		this.size = clusterOptions.size || 40
 		this.range = clusterOptions.range || 5
 		this.count = clusterOptions.count || 8
@@ -102,6 +108,22 @@ class Metaball extends Canvas {
 			circle.radius = this.size + value * i
 			return circle
 		})
+		this.render()
+	}
+
+	public get levels() {
+		return this._levels
+	}
+	public set levels(value: number) {
+		this._levels = value
+		this.render()
+	}
+
+	public get spread() {
+		return this._spread
+	}
+	public set spread(value: number) {
+		this._spread = value
 		this.render()
 	}
 
@@ -189,10 +211,9 @@ class Metaball extends Canvas {
 		return [cluster, remainder]
 	}
 
-	private get clusters(): Circle[][] {
+	private getClusters(candidates: Circle[]): Circle[][] {
 		// gets all clusters from dynamic candidate pool
 		const clusters: Circle[][] = []
-		let candidates = [...this.circles]
 		while (candidates.length) {
 			// test all possible connected circles against one
 			const parent = candidates.pop()
@@ -315,17 +336,31 @@ class Metaball extends Canvas {
 			return
 		}
 
-		this.clusters.forEach((cluster: Circle[], i: number) => {
-			this.ctx.strokeStyle = this.color(i + 1)
-			if (cluster.length > this.minCluster) {
-				const arcs = this.getArcs(cluster[0], cluster, null, null)
-				arcs.forEach((arc: Arc) => {
-					this.ctx.beginPath()
-					this.ctx.arc(...arc.canvasArgs)
-					this.ctx.stroke()
-				})
-			}
-		})
+		for (let i = 0; i < this.levels; i++) {
+			const circles = this.generateRings(i)
+			this.drawClusters(circles)
+		}
+	}
+
+	private generateRings(level: number): Circle[] {
+		return this.circles.map((circle: Circle) => {
+			return new Circle(circle.center.x, circle.center.y, circle.radius + level * (10 + level * this.spread))
+			})
+	}
+
+	private drawClusters(circles: Circle[]) {
+			const clusters = this.getClusters(circles)
+			clusters.forEach((cluster: Circle[], i: number) => {
+				this.ctx.strokeStyle = this.color(i + 1)
+				if (cluster.length > this.minCluster) {
+					const arcs = this.getArcs(cluster[0], cluster, null, null)
+					arcs.forEach((arc: Arc) => {
+						this.ctx.beginPath()
+						this.ctx.arc(...arc.canvasArgs)
+						this.ctx.stroke()
+					})
+				}
+			})
 	}
 }
 

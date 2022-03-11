@@ -19,6 +19,8 @@ const defaultOptions = {
 		range: 5,
 		minCluster: 0,
 		showOriginal: true,
+		levels: 1,
+		spread: 1,
 	},
 }
 
@@ -49,7 +51,13 @@ class App {
 			.add({ sizeRange: options.cluster.range }, 'sizeRange', 0, 15, 1)
 			.onChange((value: number) => (this.metaball.range = value))
 		this.gui
-			.add({ showAll: options.cluster.minCluster < 1 }, 'showAll')
+			.add({ levels: options.cluster.levels }, 'levels', 1, 10, 1)
+			.onChange((value: number) => (this.metaball.levels = value))
+		this.gui
+			.add({ spread: options.cluster.spread }, 'spread', 1, 10, 1)
+			.onChange((value: number) => (this.metaball.spread = value))
+		this.gui
+			.add({ showDetached: options.cluster.minCluster < 1 }, 'showDetached')
 			.onChange((value: boolean) => (this.metaball.minCluster = value ? 0 : 1))
 		this.gui
 			.add({ showOriginal: options.cluster.showOriginal }, 'showOriginal')
