@@ -294,6 +294,7 @@ class Metaball extends Canvas {
 		}
 
 		starting = starting || this.firstExterior(intersectors)
+		if (!starting) return arcs
 		const ending = this.smallestClockwiseRotation(parent, starting.points[0], intersectors)
 
 		arcs.push(new Arc(parent.center, starting.points[0], ending.points[1], parent.radius))
@@ -345,22 +346,22 @@ class Metaball extends Canvas {
 	private generateRings(level: number): Circle[] {
 		return this.circles.map((circle: Circle) => {
 			return new Circle(circle.center.x, circle.center.y, circle.radius + level * (10 + level * this.spread))
-			})
+		})
 	}
 
 	private drawClusters(circles: Circle[]) {
-			const clusters = this.getClusters(circles)
-			clusters.forEach((cluster: Circle[], i: number) => {
-				this.ctx.strokeStyle = this.color(i + 1)
-				if (cluster.length > this.minCluster) {
-					const arcs = this.getArcs(cluster[0], cluster, null, null)
-					arcs.forEach((arc: Arc) => {
-						this.ctx.beginPath()
-						this.ctx.arc(...arc.canvasArgs)
-						this.ctx.stroke()
-					})
-				}
-			})
+		const clusters = this.getClusters(circles)
+		clusters.forEach((cluster: Circle[], i: number) => {
+			this.ctx.strokeStyle = this.color(i + 1)
+			if (cluster.length > this.minCluster) {
+				const arcs = this.getArcs(cluster[0], cluster, null, null)
+				arcs.forEach((arc: Arc) => {
+					this.ctx.beginPath()
+					this.ctx.arc(...arc.canvasArgs)
+					this.ctx.stroke()
+				})
+			}
+		})
 	}
 }
 
