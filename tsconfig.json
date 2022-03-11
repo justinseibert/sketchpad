@@ -1,17 +1,17 @@
 {
-  "compilerOptions": {
-    "allowJs": false,
-    "module": "es6",
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "target": "es5",
-    "baseUrl": "./",
-    "paths": {
-      "src/*": ["src/*"]
-    }
-  },
-  "include": ["src"],
-  "exclude": [".git", "dist", "node_modules", "public"]
+	"compilerOptions": {
+		"allowJs": false,
+		"module": "es6",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"outDir": "./dist/",
+		"sourceMap": true,
+		"target": "es5",
+		"baseUrl": "./",
+		"paths": {
+			"src/*": ["src/*"]
+		}
+	},
+	"include": ["src", "index.d.ts"],
+	"exclude": [".git", "dist", "node_modules", "public"]
 }
