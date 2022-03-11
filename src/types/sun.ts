@@ -1,6 +1,5 @@
 export interface SunOptions {
-    radius?: number
-    margin?: number
-    interval?: number
-    startInterval?: number
+  power?: number;
+  interval?: number;
+  startInterval?: number;
 }
