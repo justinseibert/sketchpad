@@ -10,7 +10,7 @@
 		<% } %>
 	</head>
 	<body>
-		<canvas id="app"></canvas>
+		<div id="app"></div>
 
 		<% for (const file in htmlWebpackPlugin.files.js) { %>
 		<script type="module" src="<%= htmlWebpackPlugin.files.js[file] %>"></script>

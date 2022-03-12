@@ -13,4 +13,7 @@ export interface IAttribute {
 export interface IOptions {
 	input?: string
 	size?: number
+	algorithm?: UAlgorithm
 }
+
+export type UAlgorithm = 'sha1' | 'sha224' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'rmd160'

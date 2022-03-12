@@ -4,6 +4,7 @@ import Point from 'src/models/point'
 class Canvas {
 	ctx: CanvasRenderingContext2D
 	dpi: number
+	parent: HTMLDivElement
 	el: HTMLCanvasElement
 	margin: number
 	center: Point
@@ -11,19 +12,22 @@ class Canvas {
 	height: number
 	width: number
 
-	constructor(el: HTMLCanvasElement) {
-		this.center = new Point(window.innerWidth / 2, window.innerHeight / 2)
+	constructor(parent: HTMLDivElement) {
+		this.parent = parent
+		this.el = document.createElement('canvas')
+		this.parent.appendChild(this.el)
+
+		this.center = new Point(parent.clientWidth / 2, parent.clientHeight / 2)
 		this.color = new Color({
 			h: 30,
 			s: 7,
 			l: 17,
 		})
-		this.el = el
-		this.ctx = el.getContext('2d')
+		this.ctx = this.el.getContext('2d')
 		this.dpi = 2
-		this.height = window.innerHeight
+		this.height = parent.clientHeight
 		this.margin = -3
-		this.width = window.innerWidth
+		this.width = parent.clientWidth
 	}
 
 	init() {

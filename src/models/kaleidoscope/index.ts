@@ -7,7 +7,7 @@ import Line from 'src/models/line'
 
 import { radian, rotatePoint } from 'src/utils/geometry'
 
-import { IAttribute, IChunk, IOptions } from './types'
+import { IAttribute, IChunk, IOptions, UAlgorithm } from './types'
 
 const r360 = radian(360)
 
@@ -20,7 +20,7 @@ class Kaleidoscope {
 	step: number
 	width: number
 
-	algorithmList: string[] = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160']
+	algorithmList: UAlgorithm[] = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160']
 
 	private _size: number = 0
 	private _hash: string = ''
@@ -38,6 +38,7 @@ class Kaleidoscope {
 		this.pixels = []
 		this.step = 4
 
+		this.algorithm = options.algorithm || 'sha256'
 		this.size =
 			options.size || (this.canvas.width > this.canvas.height ? this.canvas.height : this.canvas.width) - 50
 		this.scale = Math.sqrt(this.width * 0.03)
