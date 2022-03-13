@@ -17,6 +17,7 @@
 	"devDependencies": {
 		"@babel/core": "^7.13.13",
 		"@babel/preset-env": "^7.13.12",
+		"@types/lodash.debounce": "^4.0.6",
 		"autoprefixer": "^10.2.5",
 		"babel-plugin-transform-object-rest-spread": "^6.26.0",
 		"css-loader": "^5.2.0",
@@ -33,6 +34,7 @@
 		"webpack-dev-server": "^4.7.4"
 	},
 	"dependencies": {
-		"lil-gui": "^0.16.1"
+		"lil-gui": "^0.16.1",
+		"lodash.debounce": "^4.0.8"
 	}
 }
