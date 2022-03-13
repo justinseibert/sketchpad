@@ -1,4 +1,3 @@
 import 'src/styles/main.scss'
 
-import App from './index'
-export default App
+export { default as default } from './browser'

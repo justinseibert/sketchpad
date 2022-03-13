@@ -1,20 +1,20 @@
 {
 	"compilerOptions": {
 		"allowJs": false,
+		"allowSyntheticDefaultImports": true,
 		"declaration": true,
 		"lib": ["es2015", "DOM"],
 		"module": "es6",
 		"moduleResolution": "node",
 		"noImplicitAny": true,
-		"noEmit": false,
-		"outDir": "./lib",
+		"outDir": "./dist/tsc",
 		"sourceMap": true,
 		"target": "es5",
 		"baseUrl": "./",
 		"paths": {
-			"src/*": ["./src/*"]
+			"src/*": ["src/*"]
 		}
 	},
-	"include": ["src", "index.d.ts"],
+	"include": ["src/**/*", "index.d.ts"],
 	"exclude": [".git", "dist", "node_modules", "public"]
 }

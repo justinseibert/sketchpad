@@ -1,14 +1,14 @@
 {
 	"name": "@justinseibert/collidicon",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "a tool for generating beautiful hash-based identicons",
-	"main": "./dist/index.js",
-	"types": "./lib/index.d.ts",
+	"browser": "./dist/index.js",
+	"types": "./dist/tsc/browser.d.ts",
 	"scripts": {
-		"clean": "rm -r ./dist/* ./lib/*",
-		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./lib",
+		"clean": "rm -r ./dist/* || true",
+		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist/tsc",
 		"build:pro": "webpack --config webpack.pro.js",
-		"build": "npm run clean || npm run types && npm run build:pro",
+		"build": "npm i && npm run clean && npm run types && npm run build:pro",
 		"start": "webpack serve --config webpack.dev.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

@@ -2,18 +2,8 @@ const path = require('path')
 const webpack = require('webpack')
 
 module.exports = {
-	devtool: 'inline-source-map',
-	entry: ['./lib/index.js'],
+	entry: './dist/tsc/browser.js',
 	mode: 'production',
-	module: {
-		rules: [
-			{
-				test: /\.ts$/,
-				use: 'ts-loader',
-				exclude: /node_modules/,
-			},
-		],
-	},
 	output: {
 		filename: 'index.js',
 		path: path.resolve(__dirname, 'dist'),
