@@ -1,5 +1,3 @@
-import "src/styles/main.scss";
-
 import GUI from "lil-gui";
 
 import Metaball from "src/models/metaball";

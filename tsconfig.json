@@ -1,10 +1,12 @@
 {
   "compilerOptions": {
     "allowJs": false,
+    "declaration": true,
+    "lib": ["es2015", "DOM"],
     "module": "es6",
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "outDir": "./dist/",
+    "outDir": "./dist/tsc",
     "sourceMap": true,
     "target": "es5",
     "baseUrl": "./",
@@ -12,6 +14,6 @@
       "src/*": ["src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*", "index.d.ts"],
   "exclude": [".git", "dist", "node_modules", "public"]
 }
