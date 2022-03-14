@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const htmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-	entry: './src/index.ts',
+	entry: './src/dev.ts',
 	devServer: {
 		host: '0.0.0.0',
 		port: 3000,
@@ -25,7 +25,7 @@ module.exports = {
 		],
 	},
 	output: {
-		filename: 'bundle.js',
+		filename: 'collidicon.js',
 		library: {
 			name: 'App',
 			type: 'umd',

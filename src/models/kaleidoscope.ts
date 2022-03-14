@@ -7,12 +7,30 @@ import Line from 'src/models/line'
 
 import { radian, rotatePoint } from 'src/utils/geometry'
 
-import { IAttribute, IChunk, IOptions } from './types'
+export interface KaleidoscopeChunk {
+	radius: string
+	offset: string
+	slice: string
+}
+
+export interface KaleidoscopeAttribute {
+	radius: number
+	offset: number
+	slices: number
+}
+
+export interface KaleidoscopeOptions {
+	input?: string
+	size?: number
+	algorithm?: AlgorithmType
+}
+
+export type AlgorithmType = 'sha1' | 'sha224' | 'sha256' | 'sha384' | 'sha512' | 'md5' | 'rmd160'
 
 const r360 = radian(360)
 
 class Kaleidoscope {
-	attributes: IAttribute
+	attributes: KaleidoscopeAttribute
 	canvas: Canvas
 	height: number
 	pixels: number[]
@@ -20,24 +38,25 @@ class Kaleidoscope {
 	step: number
 	width: number
 
-	algorithmList: string[] = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160']
+	algorithmList: AlgorithmType[] = ['sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'md5', 'rmd160']
 
 	private _size: number = 0
 	private _hash: string = ''
 	private _input: string = ''
 	private _algorithm: string = 'sha256'
 
-	constructor(canvas: Canvas, options: IOptions) {
+	constructor(canvas: Canvas, options: KaleidoscopeOptions) {
 		this.attributes = {
 			offset: 0,
 			radius: 0,
 			slices: 0,
-		} as IAttribute
+		} as KaleidoscopeAttribute
 		this.canvas = canvas
 		this.input = options.input || 'hello world'
 		this.pixels = []
 		this.step = 4
 
+		this.algorithm = options.algorithm || 'sha256'
 		this.size =
 			options.size || (this.canvas.width > this.canvas.height ? this.canvas.height : this.canvas.width) - 50
 		this.scale = Math.sqrt(this.width * 0.03)
@@ -95,7 +114,7 @@ class Kaleidoscope {
 		return radian(360 / this.attributes.slices)
 	}
 
-	private getChunks(index: number): IChunk {
+	private getChunks(index: number): KaleidoscopeChunk {
 		const safe = (i: number) => {
 			return i % this.hash.length
 		}

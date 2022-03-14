@@ -1,32 +1,37 @@
 import Color from 'src/models/color'
 import Point from 'src/models/point'
 
+export interface CanvasOptions {
+	width?: number
+	height?: number
+	dpi?: number
+}
+
 class Canvas {
 	ctx: CanvasRenderingContext2D
 	dpi: number
+	parent: HTMLDivElement
 	el: HTMLCanvasElement
-	margin: number
 	center: Point
-	color: Color
 	height: number
 	width: number
 
-	constructor(el: HTMLCanvasElement) {
-		this.center = new Point(window.innerWidth / 2, window.innerHeight / 2)
-		this.color = new Color({
-			h: 30,
-			s: 7,
-			l: 17,
-		})
-		this.el = el
-		this.ctx = el.getContext('2d')
-		this.dpi = 2
-		this.height = window.innerHeight
-		this.margin = -3
-		this.width = window.innerWidth
+	constructor(parent: HTMLDivElement, options: CanvasOptions) {
+		this.parent = parent
+		this.el = document.createElement('canvas')
+		this.parent.appendChild(this.el)
+
+		this.resize(options)
 	}
 
-	init() {
+	public resize(options: CanvasOptions) {
+		this.height = options.height || this.parent.clientHeight
+		this.width = options.width || this.parent.clientWidth
+		this.center = new Point(this.width / 2, this.height / 2)
+
+		this.ctx = this.el.getContext('2d')
+		this.dpi = options.dpi || this.dpi || 2
+
 		this.el.width = this.width * this.dpi
 		this.el.height = this.height * this.dpi
 		this.el.style.width = `${this.width}px`
@@ -36,7 +41,7 @@ class Canvas {
 		this.ctx.save()
 	}
 
-	clear() {
+	public clear() {
 		this.ctx.clearRect(0, 0, this.width, this.height)
 	}
 }
