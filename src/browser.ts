@@ -13,7 +13,7 @@ interface InitOptions {
 }
 
 const defaultOptions = {
-	canvas: { width: 500 },
+	canvas: {},
 	cluster: {
 		count: 8,
 		size: 40,
