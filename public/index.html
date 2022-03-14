@@ -10,7 +10,7 @@
 		<% } %>
 	</head>
 	<body>
-		<canvas id="app"></canvas>
+		<div id="app"></div>
 
 		<% for (const file in htmlWebpackPlugin.files.js) { %>
 		<script type="module" src="<%= htmlWebpackPlugin.files.js[file] %>"></script>
@@ -19,7 +19,7 @@
 		<script type="text/javascript">
 			window.addEventListener('load', function () {
 				var elem = document.getElementById('app')
-				var instance = new App(elem)
+				new App(elem)
 			})
 		</script>
 	</body>

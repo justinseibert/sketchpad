@@ -1,12 +1,10 @@
 import randomColor from 'randomColor'
 import { random } from 'lodash'
 
-import Canvas from 'src/models/canvas'
+import Canvas, { CanvasOptions } from 'src/models/canvas'
 import Circle from 'src/models/circle'
 import Arc from 'src/models/arc'
 import Point from 'src/models/point'
-
-import { CanvasOptions } from 'src/types/canvas'
 
 interface Intersector {
 	points: Point[]
@@ -39,7 +37,7 @@ class Metaball extends Canvas {
 	private _levels: number = 1
 	private _spread: number = 1
 
-	constructor(el: HTMLCanvasElement, options: CanvasOptions, clusterOptions: ClusterOptions) {
+	constructor(el: HTMLDivElement, options: CanvasOptions, clusterOptions: ClusterOptions) {
 		super(el, options)
 
 		this.showOriginal = clusterOptions.showOriginal
