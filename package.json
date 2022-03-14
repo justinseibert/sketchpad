@@ -1,34 +1,40 @@
 {
-  "name": "scsstspad",
-  "version": "0.0.0",
-  "description": "a minimal webpack starter with typescript and sass",
-  "scripts": {
-    "build": "webpack",
-    "start": "webpack serve",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.13.13",
-    "@babel/preset-env": "^7.13.12",
-    "@types/lodash": "^4.14.171",
-    "autoprefixer": "^10.2.5",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "css-loader": "^5.2.0",
-    "html-webpack-plugin": "^5.3.1",
-    "postcss-loader": "^5.2.0",
-    "sass": "^1.32.8",
-    "sass-loader": "^11.0.1",
-    "style-loader": "^2.0.0",
-    "ts-loader": "^8.0.18",
-    "typescript": "^4.2.3",
-    "webpack": "^5.28.0",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
-  },
-  "dependencies": {
-    "lil-gui": "^0.16.1",
-    "lodash": "^4.17.21"
-  }
+	"name": "@justinseibert/pathway",
+	"version": "1.0.0",
+	"description": "A tree generator",
+	"browser": "./dist/index.js",
+	"types": "./dist/tsc/browser.d.ts",
+	"scripts": {
+		"clean": "rm -r ./dist/* || true",
+		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist/tsc",
+		"build:pro": "webpack --config webpack.pro.js",
+		"build": "npm i && npm run clean && npm run types && npm run build:pro",
+		"start": "webpack serve --config webpack.dev.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@babel/core": "^7.13.13",
+		"@babel/preset-env": "^7.13.12",
+		"@types/lodash": "^4.14.171",
+		"autoprefixer": "^10.2.5",
+		"babel-plugin-transform-object-rest-spread": "^6.26.0",
+		"css-loader": "^5.2.0",
+		"html-webpack-plugin": "^5.3.1",
+		"postcss-loader": "^5.2.0",
+		"sass": "^1.32.8",
+		"sass-loader": "^11.0.1",
+		"style-loader": "^2.0.0",
+		"ts-loader": "^8.0.18",
+		"tscpaths": "^0.0.9",
+		"typescript": "^4.2.3",
+		"webpack": "^5.28.0",
+		"webpack-cli": "^4.9.2",
+		"webpack-dev-server": "^4.7.4"
+	},
+	"dependencies": {
+		"lil-gui": "^0.16.1",
+		"lodash": "^4.17.21"
+	}
 }
