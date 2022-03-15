@@ -1,16 +1,20 @@
 {
 	"name": "@justinseibert/pathway",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A tree generator",
 	"browser": "./dist/index.js",
 	"types": "./dist/tsc/browser.d.ts",
+	"files": [
+		"dist/"
+	],
 	"scripts": {
-		"clean": "rm -r ./dist/* || true",
-		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist/tsc",
 		"build:pro": "webpack --config webpack.pro.js",
-		"build": "npm i && npm run clean && npm run types && npm run build:pro",
+		"build": "npm run clean && npm run types && npm run build:pro",
+		"clean": "rm -r ./dist/* || true",
+		"prepare": "npm run build",
 		"start": "webpack serve --config webpack.dev.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist/tsc"
 	},
 	"author": "",
 	"license": "ISC",
