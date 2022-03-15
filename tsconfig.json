@@ -1,8 +1,9 @@
 {
 	"compilerOptions": {
-		"allowJs": false,
+		"allowJs": true,
 		"allowSyntheticDefaultImports": true,
 		"declaration": true,
+		"declarationMap": true,
 		"lib": ["es2015", "DOM"],
 		"module": "es6",
 		"moduleResolution": "node",
