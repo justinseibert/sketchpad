@@ -1,4 +1,4 @@
-import randomColor from 'randomColor'
+import randomColor from 'randomcolor'
 import { random } from 'lodash'
 
 import Canvas, { CanvasOptions } from 'src/models/canvas'
