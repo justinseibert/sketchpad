@@ -1,6 +1,6 @@
 {
 	"name": "@justinseibert/cluster",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A demonstration of data clustering logic",
 	"browser": "./dist/index.js",
 	"types": "./dist/tsc/browser.d.ts",
@@ -11,7 +11,7 @@
 		"build:pro": "webpack --config webpack.pro.js",
 		"build": "npm run clean && npm run types && npm run build:pro",
 		"clean": "rm -r ./dist/* || true",
-		"prepare": "npm run build",
+		"prepack": "npm run build",
 		"start": "webpack serve --config webpack.dev.js",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"types": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist/tsc"
