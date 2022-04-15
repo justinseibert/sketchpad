@@ -1,6 +1,6 @@
-@mixin -grid($margin:0) {
+@mixin -grid($margin: 0) {
   @for $i from 1 to 11 {
-    $width: ((100% / 12) * $i) - $margin;
+    $width: (calc(100% / 12) * $i) - $margin;
     &.g#{$i} {
       width: $width;
       max-width: $width;
@@ -122,7 +122,7 @@
   float: left;
   box-sizing: border-box;
   width: 100%;
-  &.float-center{
+  &.float-center {
     float: none;
   }
   &.-right {
@@ -137,7 +137,7 @@
   @include -grid(0);
 }
 
-@media (min-width: screen(mobile, 1)){
+@media (min-width: screen(mobile, 1)) {
   .tablet-fix .grid {
     @include -grid(0);
   }
@@ -166,7 +166,7 @@
   }
 }
 
-@media (min-width: screen(tablet,-1)){
+@media (min-width: screen(tablet,-1)) {
   .grid {
     @include -grid(0);
   }
@@ -183,5 +183,4 @@
       }
     }
   }
-
 }

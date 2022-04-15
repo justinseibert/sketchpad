@@ -1,28 +1,26 @@
 <html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>scsstspad</title>
-
-    <% for (const file in htmlWebpackPlugin.files.css) { %>
-    <link href="<%= htmlWebpackPlugin.files.css[css] %>" rel="stylesheet">
-    <% } %>
-
   </head>
   <body>
     <canvas id="app"></canvas>
 
     <% for (const file in htmlWebpackPlugin.files.js) { %>
-    <script type="module" src="<%= htmlWebpackPlugin.files.js[file] %>"></script>
+    <script
+      type="module"
+      src="<%= htmlWebpackPlugin.files.js[file] %>"
+    ></script>
     <% } %>
 
     <script type="text/javascript">
-      window.addEventListener('load', function() {
-        var elem = document.getElementById('app');
+      window.addEventListener("load", function () {
+        var elem = document.getElementById("app");
         var instance = new App(elem);
         instance.init();
-      })
+      });
     </script>
   </body>
 </html>
