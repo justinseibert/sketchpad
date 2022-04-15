@@ -1,6 +1,8 @@
 // get an integer between min, max
-export const between = (min: number, max: number) => {
-	return Math.floor(Math.random() * (max - min + 1)) + min
+export const between = (min: number, max: number, decimal: number = 0) => {
+	decimal = 10 ** decimal
+	const n = Math.random() * (max - min) + min
+	return Math.floor(n * decimal) / decimal
 }
 
 // generate weighted random boolean

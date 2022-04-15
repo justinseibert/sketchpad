@@ -1,4 +1,4 @@
-import Point from 'src/models/point'
+import { PointType } from 'src/models/point'
 
 // Convert degree to radian
 export const degree = (radian: number) => {
@@ -26,12 +26,12 @@ export const hypotenuse = (sideA: number, sideB: number) => {
 }
 
 // find the radian angle between two points
-export const radianBetween = (a: Point, b: Point) => {
+export const radianBetween = (a: PointType, b: PointType) => {
 	return Math.atan2(b.y - a.y, b.x - a.x)
 }
 
 // find the degree angle between two points
-export const degreeBetween = (a: Point, b: Point) => {
+export const degreeBetween = (a: PointType, b: PointType) => {
 	const radian = radianBetween(a, b)
 	return degree(radian)
 }
