@@ -1,5 +1,9 @@
 import { PointType } from 'src/models/point'
 
+export const r360 = 2 * Math.PI
+export const r180 = r360 / 2
+export const r90 = r180 / 2
+
 // Convert degree to radian
 export const degree = (radian: number) => {
 	return radian * (180 / Math.PI)
@@ -36,4 +40,16 @@ export const degreeBetween = (a: PointType, b: PointType) => {
 	return degree(radian)
 }
 
-export const r360 = 2 * Math.PI
+export const rotatePoint = (origin: PointType | null, point: PointType, radian: number) => {
+	if (!origin) {
+		origin = { x: 0, y: 0 }
+	}
+
+	// translate point by the origin
+	const { x, y } = { x: point.x - origin.x, y: point.y - origin.y }
+
+	return {
+		x: x * Math.cos(radian) - y * Math.sin(radian) + origin.x,
+		y: y * Math.cos(radian) + x * Math.sin(radian) + origin.y,
+	}
+}
