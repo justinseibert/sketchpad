@@ -15,7 +15,7 @@ class Point {
 		return this.x >= bounds.left && this.x <= bounds.right && this.y >= bounds.top && this.y <= bounds.bottom
 	}
 
-	public atBoundary(bounds: Bounds, margin: number = 0) {
+	public atEdgeOf(bounds: Bounds, margin: number = 0) {
 		if (this.x <= bounds.left + margin) {
 			return 'left'
 		} else if (this.x >= bounds.right - margin) {
@@ -27,6 +27,27 @@ class Point {
 		}
 
 		return ''
+	}
+
+	public inQuadrantOf(bounds: Bounds) {
+		if (!this.isInBounds(bounds)) {
+			return ''
+		}
+
+		let quandrant = ''
+		if (this.y <= bounds.bottom && this.y > bounds.bottom / 2) {
+			quandrant += 'bottom'
+		} else {
+			quandrant += 'top'
+		}
+
+		if (this.x <= bounds.right && this.x > bounds.right / 2) {
+			quandrant += 'Right'
+		} else {
+			quandrant += 'Left'
+		}
+
+		return quandrant
 	}
 }
 
