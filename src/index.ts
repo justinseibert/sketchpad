@@ -1,4 +1,4 @@
-import './styles/main.scss'
+import 'src/styles/main.scss'
 
 import Canvas from './models/canvas'
 import Point from './models/point'

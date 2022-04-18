@@ -1,7 +1,7 @@
 import Point from './point'
 import Bounds from './bounds'
 
-import fullscreenIcon from '../styles/icon/fullscreen.svg'
+import fullscreenIcon from 'src/styles/icon/fullscreen.svg'
 
 export interface CanvasOptions {
 	name?: string

@@ -1,4 +1,4 @@
-import { PointType } from 'src/models/point'
+import { PointType } from '../models/point'
 
 export const r360 = 2 * Math.PI
 export const r180 = r360 / 2
