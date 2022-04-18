@@ -1,124 +1,135 @@
 .-clearfix::before,
 .-clearfix::after {
-  content: '';
-  display: table;
-  clear: both;
+	content: '';
+	display: table;
+	clear: both;
 }
 
 .-scroll-within {
-  scroll-behavior: smooth;
-  overscroll-behavior: none;
-  -webkit-overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+	overscroll-behavior: none;
+	-webkit-overscroll-behavior: none;
+	-webkit-overflow-scrolling: touch;
 }
 
 .-scroll {
-  scroll-behavior: smooth;
-  overscroll-behavior: auto;
-  -webkit-overscroll-behavior: auto;
-  -webkit-overflow-scrolling: touch;
+	scroll-behavior: smooth;
+	overscroll-behavior: auto;
+	-webkit-overscroll-behavior: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.-hide,
+.-show {
+	animation-duration: 300ms;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in-out;
+	animation-fill-mode: backwards;
 }
 
 .-hide {
-  display: none !important;
-  opacity: 0;
+	opacity: 0;
+	animation-name: fade-out;
 }
 
 .-show {
-  opacity: 1;
-  transform: translate3d(0,0,0);
-  animation-name: fade-in;
-  animation-duration: 400ms;
-  animation-iteration-count: 1;
-  animation-timing-function: ease-in-out;
-  animation-fill-mode: backwards;
+	opacity: 1;
+	animation-name: fade-in;
 }
 
 @keyframes fade-in {
-  0% {
-    transform: translate3d(0,0,0);
-    opacity: 0;
-  }
-  15% {
-    // transform: translate3d(0,4px,0);
-  }
-  60% {
-    transform: translate3d(0,0,0);
-  }
-  100% {
-    opacity: 1;
-  }
+	0% {
+		transform: translate3d(0, 0, 0);
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fade-out {
+	0% {
+		transform: translate3d(0, 0, 0);
+		opacity: 1;
+	}
+	99% {
+		opacity: 0;
+	}
+	100% {
+		display: none;
+	}
 }
 
 .-loading-animation {
-  animation-name: loading-animation;
-  animation-duration: 4s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  background-image: repeating-linear-gradient(
-    to top left,
-    color(loading-a) 0%,
-    color(loading-a) 20%,
+	animation-name: loading-animation;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	background-image: repeating-linear-gradient(
+		to top left,
+		color(loading-a) 0%,
+		color(loading-a) 20%,
 
-    color(loading-b) 21%,
-    color(loading-b) 29%,
+		color(loading-b) 21%,
+		color(loading-b) 29%,
 
-    color(loading-a) 30%,
-    color(loading-a) 50%,
-    color(loading-a) 70%,
+		color(loading-a) 30%,
+		color(loading-a) 50%,
+		color(loading-a) 70%,
 
-    color(loading-b) 71%,
-    color(loading-b) 79%,
+		color(loading-b) 71%,
+		color(loading-b) 79%,
 
-    color(loading-a) 80%,
-    color(loading-a) 100%
-  );
-  background-repeat: repeat;
-  background-size: 50px 50px;
+		color(loading-a) 80%,
+		color(loading-a) 100%
+	);
+	background-repeat: repeat;
+	background-size: 50px 50px;
 }
 
 @keyframes loading-animation {
-  0% {
-    background-position: 0 0px;
-  }
-  100% {
-    background-position: 0 300px;
-  }
+	0% {
+		background-position: 0 0px;
+	}
+	100% {
+		background-position: 0 300px;
+	}
 }
 
-$frames: (
-  top,
-  right,
-  bottom,
-  left
-);
+$frames: (top, right, bottom, left);
 
 $axis: (
-  x: (right,left),
-  y: (top,bottom),
+	x: (
+		right,
+		left,
+	),
+	y: (
+		top,
+		bottom,
+	),
 );
 
-@each $k,$v in $space-map {
-  .-frame-#{$k} {
-    padding: $v !important;
-  }
-  .-break-#{$k} {
-    margin-bottom: $v !important;
-  }
+@each $k, $v in $space-map {
+	.-frame-#{$k} {
+		padding: $v !important;
+	}
+	.-break-#{$k} {
+		margin-bottom: $v !important;
+	}
 }
 
 @each $frame in $frames {
-    .-unframe-#{$frame} {
-      padding-#{$frame}: 0 !important;
-      margin-#{$frame}: 0 !important;
-    }
+	.-unframe-#{$frame} {
+		padding-#{$frame}: 0 !important;
+		margin-#{$frame}: 0 !important;
+	}
 }
 
-@each $k,$v in $axis {
-  .-unframe-#{$k} {
-    @each $frame in $v {
-      padding-#{$frame}: 0 !important;
-      margin-#{$frame}: 0 !important;
-    }
-  }
+@each $k, $v in $axis {
+	.-unframe-#{$k} {
+		@each $frame in $v {
+			padding-#{$frame}: 0 !important;
+			margin-#{$frame}: 0 !important;
+		}
+	}
 }

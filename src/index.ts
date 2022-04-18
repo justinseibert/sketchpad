@@ -89,7 +89,7 @@ class App {
 		for (let i = 0; i < 500; i++) {
 			const radius = between(10, 50)
 			const margin = radius + 10
-			const max = 0.01
+			const max = 0.001
 			const min = max * -1
 			arcs.push({
 				color: '#' + ['', '', ''].map(() => between(0, 255).toString(16)).join(''),
