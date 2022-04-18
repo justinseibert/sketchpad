@@ -17,16 +17,6 @@ interface Arc {
 	ramp: number
 }
 
-const toggleFullScreen = () => {
-	if (!document.fullscreenElement) {
-		document.documentElement.requestFullscreen()
-	} else {
-		if (document.exitFullscreen) {
-			document.exitFullscreen()
-		}
-	}
-}
-
 class App {
 	el: HTMLDivElement
 	canvas: Canvas
@@ -61,11 +51,6 @@ class App {
 		window.addEventListener('mouseup', () => {
 			this.generate()
 		})
-		window.addEventListener('keydown', (event) => {
-			if (event.key === ' ') {
-				toggleFullScreen()
-			}
-		})
 		this.canvas.el.addEventListener('mousemove', (event) => {
 			this.setAngle(event)
 		})
@@ -73,62 +58,62 @@ class App {
 			this.setAngle(event)
 		})
 
-		const framerate = 100
-		const animate = new Animation(() => {
-			this.canvas.layers = []
-			this.arcs = this.arcs.map((arc: Arc) => {
-				const {
-					slope,
-					center,
-					center: { x, y },
-					radius,
-					color,
-					growth,
-				} = arc
-				this.canvas.layers.push(() => {
-					const gradient = this.generateGradient(
-						center,
-						radius,
-						color.map((obj: Color) => {
-							obj.h += arc.ramp
-							return obj
-						})
-					)
-
-					this.canvas.ctx.fillStyle = gradient
-					this.canvas.ctx.beginPath()
-					this.canvas.ctx.arc(x, y, radius, 0, r360)
-					this.canvas.ctx.fill()
-					this.canvas.ctx.closePath()
-				})
-
-				arc.center.x += slope.x
-				arc.center.y += slope.y
-
-				if (arc.radius < 10) {
-					arc.growth = 1
-				} else if (arc.radius > 50) {
-					arc.growth = -1
-				}
-				arc.radius += arc.growth * 0.1
-
-				switch (arc.center.atEdgeOf(this.canvas.bounds)) {
-					case 'top':
-					case 'bottom':
-						arc.slope.y *= -1
-						arc.slope.x *= -1
-					case 'left':
-					case 'right':
-						arc.slope.x *= -1
-					default:
-						break
-				}
-				return arc
-			})
-			this.canvas.render()
-		}, framerate)
-
+		const animate = new Animation(() => this.stepAnimation(), 100)
 		animate.start()
+	}
+
+	stepAnimation() {
+		this.canvas.layers = []
+		this.arcs = this.arcs.map((arc: Arc) => {
+			const {
+				slope,
+				center,
+				center: { x, y },
+				radius,
+				color,
+				growth,
+			} = arc
+			this.canvas.layers.push(() => {
+				const gradient = this.generateGradient(
+					center,
+					radius,
+					color.map((obj: Color) => {
+						obj.h += arc.ramp
+						return obj
+					})
+				)
+
+				this.canvas.ctx.fillStyle = gradient
+				this.canvas.ctx.beginPath()
+				this.canvas.ctx.arc(x, y, radius, 0, r360)
+				this.canvas.ctx.fill()
+				this.canvas.ctx.closePath()
+			})
+
+			arc.center.x += slope.x
+			arc.center.y += slope.y
+
+			if (arc.radius < 10) {
+				arc.growth = 1
+			} else if (arc.radius > 50) {
+				arc.growth = -1
+			}
+			arc.radius += arc.growth * 0.1
+
+			switch (arc.center.atEdgeOf(this.canvas.bounds)) {
+				case 'top':
+				case 'bottom':
+					arc.slope.y *= -1
+					arc.slope.x *= -1
+				case 'left':
+				case 'right':
+					arc.slope.x *= -1
+				default:
+					break
+			}
+			return arc
+		})
+		this.canvas.render()
 	}
 
 	setAngle(event: MouseEvent) {

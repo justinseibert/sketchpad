@@ -4,15 +4,56 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
-		<title>scsstspad</title>
+		<title>bubbles | sketchpad</title>
 	</head>
 	<body>
-		<div id="app"></div>
+		<div id="app">
+			<div id="canvas"></div>
+			<div id="controls">
+				<a id="icon-fullscreen" class="icon">
+					<img src="/img/fullscreen.svg" />
+				</a>
+			</div>
+		</div>
 		<script type="text/javascript">
+			var canvas,
+				controls,
+				fullscreen,
+				instance,
+				controlTimeout = 0
+
+			function toggleControls() {
+				clearTimeout(controlTimeout)
+				canvas.classList.remove('hide-cursor')
+				controls.classList.add('-show')
+				controls.classList.remove('-hide')
+				controlTimeout = window.setTimeout(function () {
+					canvas.classList.add('hide-cursor')
+					controls.classList.add('-hide')
+					controls.classList.remove('-show')
+				}, 3000)
+			}
+
+			function toggleFullscreen() {
+				if (!document.fullscreenElement) {
+					document.documentElement.requestFullscreen()
+				} else {
+					if (document.exitFullscreen) {
+						document.exitFullscreen()
+					}
+				}
+			}
+
 			window.addEventListener('load', function () {
-				var elem = document.getElementById('app')
-				var instance = new App(elem)
+				canvas = document.getElementById('canvas')
+				instance = new App(canvas)
 				instance.init()
+
+				fullscreen = document.getElementById('icon-fullscreen')
+				fullscreen.addEventListener('click', toggleFullscreen)
+
+				controls = document.getElementById('controls')
+				canvas.addEventListener('mousemove', toggleControls)
 			})
 		</script>
 	</body>
