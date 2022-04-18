@@ -1,17 +1,17 @@
 {
-  "compilerOptions": {
-    "allowJs": false,
-    "baseUrl": "./",
-    "declaration": true,
-    "lib": ["es2015", "DOM"],
-    "module": "es6",
-    "moduleResolution": "node",
-    "noEmit": false,
-    "noImplicitAny": true,
-    "outDir": "./dist/tsc/",
-    "sourceMap": true,
-    "target": "es5"
-  },
-  "include": ["src"],
-  "exclude": [".git", "dist", "node_modules", "public"]
+	"compilerOptions": {
+		"allowJs": false,
+		"baseUrl": "./",
+		"declaration": true,
+		"lib": ["es2015", "DOM"],
+		"module": "es6",
+		"moduleResolution": "node",
+		"noEmit": false,
+		"noImplicitAny": true,
+		"outDir": "./dist/tsc/",
+		"sourceMap": true,
+		"target": "es5"
+	},
+	"include": ["src", "custom.d.ts"],
+	"exclude": [".git", "dist", "node_modules", "public"]
 }

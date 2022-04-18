@@ -23,7 +23,7 @@ class App {
 	}
 
 	init() {
-		this.canvas = new Canvas(this.el, {})
+		this.canvas = new Canvas(this.el, { allowFullscreen: true })
 		this.generate()
 
 		this.canvas.afterResize = () => {
