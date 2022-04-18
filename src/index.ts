@@ -61,7 +61,7 @@ class App {
 				arc.center.x += slope.x
 				arc.center.y += slope.y
 
-				switch (arc.center.atBoundary(this.canvas.bounds)) {
+				switch (arc.center.atEdgeOf(this.canvas.bounds)) {
 					case 'top':
 					case 'bottom':
 						arc.slope.y *= -1
