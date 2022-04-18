@@ -17,6 +17,14 @@ interface Arc {
 	ramp: number
 }
 
+const toggleFullScreen = () => {
+	if (!document.fullscreenElement) {
+		document.documentElement.requestFullscreen()
+	} else {
+		if (document.exitFullscreen) {
+			document.exitFullscreen()
+		}
+	}
 }
 
 class App {
@@ -52,6 +60,11 @@ class App {
 		})
 		window.addEventListener('mouseup', () => {
 			this.generate()
+		})
+		window.addEventListener('keydown', (event) => {
+			if (event.key === ' ') {
+				toggleFullScreen()
+			}
 		})
 		this.canvas.el.addEventListener('mousemove', (event) => {
 			this.setAngle(event)
