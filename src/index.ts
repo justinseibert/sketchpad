@@ -1,4 +1,4 @@
-import './styles/main.scss'
+import 'src/styles/main.scss'
 
 import Canvas from './models/canvas'
 import Point from './models/point'
@@ -23,7 +23,7 @@ class App {
 	}
 
 	init() {
-		this.canvas = new Canvas(this.el, {})
+		this.canvas = new Canvas(this.el, { allowFullscreen: true })
 		this.generate()
 
 		this.canvas.afterResize = () => {

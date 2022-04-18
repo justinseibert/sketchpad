@@ -19,6 +19,14 @@ module.exports = {
 				exclude: /node_modules/,
 			},
 			{
+				test: /\.(png|jpg|gif)$/,
+				type: 'asset/resource',
+			},
+			{
+				test: /\.svg$/,
+				type: 'asset/source',
+			},
+			{
 				test: /\.scss$/,
 				use: ['style-loader', 'css-loader', 'postcss-loader', 'sass-loader'],
 			},
