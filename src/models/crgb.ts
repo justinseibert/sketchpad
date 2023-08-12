@@ -16,6 +16,12 @@ class CRGB {
 		return new CRGB(r, g, b)
 	}
 
+	lerp8(dest: CRGB, amount: number): CRGB {
+		// clamp amount to 0-255, then normalize to 0-1
+		amount = Math.min(Math.max(amount, 0), 255) / 255
+		return this.lerp(dest, amount)
+	}
+
 	toString(): string {
 		return `rgb(${this.r}, ${this.g}, ${this.b})`
 	}
