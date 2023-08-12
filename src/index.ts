@@ -1,105 +1,134 @@
 import 'src/styles/main.scss'
 
+import GUI from 'lil-gui'
+
 import Canvas from './models/canvas'
-import Point from './models/point'
 import Animation from './models/animation'
+import Ring from './models/ring'
 
-import { between } from './utils/math'
 import { r360 } from './utils/geometry'
-
-interface Arc {
-	color: string
-	radius: number
-	center: Point
-	slope: Point
-}
+import CRGB from './models/crgb'
 
 class App {
 	el: HTMLDivElement
 	canvas: Canvas
-	arcs: Arc[]
+	animation: Animation
+	gui: GUI
+	ring: Ring
+
+	settings = {
+		dpi: 2,
+		blur: 0,
+		ringSize: 11,
+		ringCount: 9,
+	}
+
 	constructor(el: HTMLDivElement) {
 		this.el = el
+		this.settings = {
+			dpi: 0.3,
+			blur: 3,
+			ringSize: 11,
+			ringCount: 8,
+		}
 	}
 
 	init() {
 		this.canvas = new Canvas(this.el, { allowFullscreen: true })
-		this.generate()
+		this.canvas.dpi = this.settings.dpi
+		this.canvas.ctx.filter = this.settings.blur > 0 ? `blur(${this.settings.blur}px)` : 'none'
+		this.canvas.resize()
 
-		this.canvas.afterResize = () => {
-			this.canvas.render()
-		}
 		this.canvas.beforeRender = () => {
+			const {
+				ctx,
+				bounds: {
+					center: { x, y },
+				},
+			} = this.canvas
+
 			this.canvas.clear()
+			this.canvas.ctx.fillStyle = CRGB.Black.toString()
+			this.canvas.ctx.beginPath()
+			this.canvas.ctx.moveTo(x, y)
+			this.canvas.ctx.arc(x, y, this.ring.outerRadius, 0, r360)
+			this.canvas.ctx.fill()
 		}
 
-		window.addEventListener('resize', () => {
-			this.canvas.resize()
-		})
 		window.addEventListener('mouseup', () => {
-			this.generate()
+			// start or stop animation
+			this.animation.toggle()
 		})
 
+		this.ring = new Ring()
+		this.ring.size = 11
 		const framerate = 100
-		const animate = new Animation(() => {
-			this.canvas.layers = []
-			this.arcs = this.arcs.map((arc: Arc) => {
-				const {
-					slope,
-					center: { x, y },
-					radius,
-					color,
-				} = arc
-				this.canvas.layers.push(() => {
-					this.canvas.ctx.fillStyle = color
-					this.canvas.ctx.beginPath()
-					this.canvas.ctx.moveTo(x, y)
-					this.canvas.ctx.arc(x, y, radius, 0, r360)
-					this.canvas.ctx.fill()
-				})
-
-				arc.center.x += slope.x
-				arc.center.y += slope.y
-
-				switch (arc.center.atEdgeOf(this.canvas.bounds)) {
-					case 'top':
-					case 'bottom':
-						arc.slope.y *= -1
-						arc.slope.x *= -1
-					case 'left':
-					case 'right':
-						arc.slope.x *= -1
-					default:
-						break
-				}
-				return arc
-			})
-			this.canvas.render()
-		}, framerate)
-
-		animate.start()
+		this.animation = new Animation(() => this.renderAnimationFrame(), framerate)
+		this.animation.start()
+		this.showControls = true
 	}
 
-	generate() {
-		const arcs = []
-
-		const {
-			bounds: { left, right, top, bottom, width, height },
-		} = this.canvas
-		for (let i = 0; i < 500; i++) {
-			const radius = between(10, 50)
-			const margin = radius + 10
-			const max = 0.001
-			const min = max * -1
-			arcs.push({
-				color: '#' + ['', '', ''].map(() => between(0, 255).toString(16)).join(''),
-				center: new Point(between(left + margin, right - margin), between(top + margin, bottom - margin)),
-				slope: new Point(between(width * min, width * max, 2), between(height * min, height * max, 2)),
-				radius,
-			})
+	public set showControls(show: boolean) {
+		if (!show) {
+			this.gui.destroy()
+			this.gui = null
+			return
 		}
 
-		this.arcs = arcs
+		if (!this.gui) {
+			this.gui = new GUI({ container: this.el })
+			this.gui.domElement.style.position = 'absolute'
+			this.gui.domElement.style.right = '0'
+			this.gui.domElement.style.top = '0'
+		}
+
+		this.gui = new GUI(this.el)
+		this.gui.add({ dpi: this.canvas.dpi }, 'dpi', 0.1, 2, 0.1).onChange((value: number) => {
+			this.canvas.dpi = value
+			this.canvas.resize()
+		})
+		this.gui.add({ blur: this.settings.blur }, 'blur', 0, 10, 1).onChange((value: number) => {
+			this.settings.blur = value
+			this.canvas.render()
+		})
+		this.gui.add({ ringSize: this.settings.ringSize }, 'ringSize', 1, 25, 1).onChange((value: number) => {
+			this.settings.ringSize = value
+			this.ring.size = value
+			this.canvas.render()
+		})
+		this.gui.add({ ringCount: this.settings.ringCount }, 'ringCount', 1, 9, 1).onChange((value: number) => {
+			this.settings.ringCount = value
+			this.ring.numLevels = value
+			this.canvas.render()
+		})
+	}
+
+	private blurCanvas = (value: number) => {
+		this.canvas.ctx.filter = value > 0 ? `blur(${value}px)` : 'none'
+	}
+
+	private fillRings = () => {
+		this.ring.pixels.forEach(({ color, center }, index) => {
+			const { bounds } = this.canvas
+			const x = bounds.center.x + center.x
+			const y = bounds.center.y + center.y
+
+			this.canvas.ctx.fillStyle = color.toString()
+			this.canvas.ctx.beginPath()
+			this.canvas.ctx.moveTo(x, y)
+			this.canvas.ctx.arc(x, y, this.ring.size, 0, r360)
+			this.canvas.ctx.fill()
+		})
+	}
+
+	private renderAnimationFrame() {
+		this.canvas.layers = [
+			() => this.blurCanvas(this.settings.blur),
+			this.fillRings,
+			() => this.blurCanvas(1),
+			this.fillRings,
+		]
+		this.canvas.render()
 	}
 }
 
