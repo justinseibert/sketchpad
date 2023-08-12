@@ -44,6 +44,10 @@ class Animation {
 			this.stop()
 		}
 	}
+
+	public toggle() {
+		this.animate(!this.isActive)
+	}
 }
 
 export default Animation
