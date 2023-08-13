@@ -1,75 +1,95 @@
 import Point from './point'
 import CRGB from './crgb'
 
-import { r360 } from 'src/utils/geometry'
+import { r360, r90 } from 'src/utils/geometry'
+import { accumulateArray } from 'src/utils/math'
 
-interface Pixel {
+export interface Pixel {
 	color: CRGB
 	center: Point
 }
 
-class Ring {
-	static allLevels = [1, 8, 12, 16, 24, 32, 40, 48, 60]
+export class Ring {
+	static instance: Ring
+	static allLedCounts = [
+		1, // 181
+		8, // 180
+		12, // 172
+		16, // 160
+		24, // 144
+		32, // 120
+		40, // 88
+		48, // 48
+	]
 
-	private _padding: number = 5
-	get padding() {
-		return this._padding
-	}
-
-	private _size: number = 25
+	private _size: number = 10
 	get size() {
 		return this._size
 	}
 	set size(size: number) {
 		this._size = size
-		this._padding = size
 		this.init()
 	}
 
-	private _levels: number[] = []
-	get levels() {
-		return this._levels
+	private _ledCounts: number[] = []
+	get ledCounts() {
+		return this._ledCounts
 	}
 
-	private _numLevels = Ring.allLevels.length
-	get numLevels() {
-		return this._numLevels
+	private _ringIndices: number[] = []
+	get ringIndices() {
+		return this._ringIndices
 	}
-	set numLevels(numLevels: number) {
-		this._numLevels = numLevels
-		this._levels = Ring.allLevels.slice(0, numLevels)
+
+	get numRings() {
+		return this.ledCounts.length
+	}
+	set numRings(numRings: number) {
+		this._ledCounts = Ring.allLedCounts.slice(0, numRings)
+		// reverse and accumulate ledCounts for
+		this._ringIndices = accumulateArray([...this._ledCounts].reverse()).reverse()
+		this._ringIndices.push(0)
+		console.log(this._ringIndices)
 		this.init()
 	}
 
 	public get outerRadius() {
-		return this.numLevels * (this.size + this.padding * 2)
+		return this.numRings * (this.size * 3)
 	}
 
 	public pixels: Pixel[] = []
 
-	constructor(numLevels: number = Ring.allLevels.length) {
-		this.numLevels = numLevels
+	constructor() {
+		if (!Ring.instance) {
+			Ring.instance = this
+			Ring.instance.numRings = Ring.allLedCounts.length
+		}
+
+		return Ring.instance
 	}
 
 	init() {
 		const pixels: Pixel[] = []
-		this.levels.forEach((numLeds: number, index: number) => {
-			const outerRadius = index * (this.size + this.padding * 2)
+
+		this.ledCounts.forEach((numLeds, i) => {
+			const outerRadius = i * (this.size * 3)
 
 			// given the outerRadius of the current ring, distribute numLeds evenly around the circumference
-			for (let i = 0; i < numLeds; i++) {
-				const angle = (i / numLeds) * r360
+			for (let ledIndex = 0; ledIndex < numLeds; ledIndex++) {
+				const angle = ((ledIndex + 1) / numLeds) * r360 + r90
 				const x = outerRadius * Math.cos(angle)
 				const y = outerRadius * Math.sin(angle)
 				pixels.push({
-					color: CRGB.White,
+					color: CRGB.Black,
 					center: new Point(x, y),
 				})
 			}
-
-			this.pixels = pixels
 		})
+
+		this.pixels = pixels
+		this.pixels.reverse()
 	}
 }
 
-export default Ring
+const RingInstance = new Ring()
+export default RingInstance
