@@ -44,15 +44,14 @@ class StarPattern extends Pattern {
 			return
 		}
 
-		for (let ringIndex = 1; ringIndex < NUM_EYE_RINGS; ringIndex++) {
-			const ledStart = this.ringCounts[ringIndex]
-			const ledEnd = this.ringCounts[ringIndex - 1]
+		for (let ringIndex = 0; ringIndex < NUM_EYE_RINGS; ringIndex++) {
+			const ledStart = this.ringCounts[ringIndex + 1]
+			const ledEnd = this.ringCounts[ringIndex]
 			const ledCount = ledEnd - ledStart
 			const segmentSize = ledCount / this.segmentCount
 
 			for (let i = 0; i < ledCount; i++) {
 				const ledIndex = ledStart + i
-				// const ledIndex2 = ledIndex + NUM_LEDS_ONE
 
 				if (ringIndex !== this.currentRing) {
 					this.leds[ledIndex] = this.leds[ledIndex].lerp8(this.decayColor, this.decayRate)
@@ -70,8 +69,6 @@ class StarPattern extends Pattern {
 
 					this.leds[ledIndex] = this.ringColor.lerp8(this.decayColor, blend)
 				}
-
-				// this.leds[ledIndex2] = this.leds[ledIndex]
 			}
 		}
 
