@@ -15,7 +15,8 @@ class StarPattern extends Pattern {
 	segmentCount = 5
 	currentRing = 0
 	sharpness = 1
-	spread = 0
+	spread = 1
+	hollow = 0.1
 
 	constructor(color: CRGB, direction: number, speed: number, leds: CRGB[], numEyes: number = 1) {
 		super(leds, numEyes)
@@ -55,7 +56,8 @@ class StarPattern extends Pattern {
 				const ledIndex = ledStart + i
 
 				if (ringIndex !== this.currentRing) {
-					this.leds[ledIndex] = this.leds[ledIndex].lerp8(this.decayColor, this.decayRate)
+					let decayRate = this.decayRate * ((NUM_EYE_RINGS - ringIndex) * this.hollow)
+					this.leds[ledIndex] = this.leds[ledIndex].lerp8(this.decayColor, decayRate)
 				} else {
 					const ratio = (i % segmentSize) / segmentSize
 					let blend = ratio * 255

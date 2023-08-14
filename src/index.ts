@@ -26,11 +26,12 @@ class App {
 		ringCount: 8,
 		isBacked: true,
 		isLabeled: false,
-		ringColor: '#d9f260',
-		decayColor: '#000000',
-		decayRate: 12,
+		ringColor: '#b0fff1',
+		decayColor: '#7f005e',
+		decayRate: 17,
 		sharpness: 1.3,
 		spread: 1,
+		hollow: 0.07,
 		segmentCount: 5,
 		speed: 7,
 		direction: 'out',
@@ -183,6 +184,12 @@ class App {
 			this.canvas.render()
 		})
 		this.pattern.spread = this.settings.spread
+		patternFolder.add({ hollow: this.settings.hollow }, 'hollow', 0.01, 1, 0.01).onChange((value: number) => {
+			this.settings.hollow = value
+			this.pattern.hollow = value
+			this.canvas.render()
+		})
+		this.pattern.hollow = this.settings.hollow
 		patternFolder
 			.add({ segmentCount: this.settings.segmentCount }, 'segmentCount', 1, 60, 1)
 			.onChange((value: number) => {
