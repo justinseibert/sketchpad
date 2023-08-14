@@ -17,6 +17,7 @@ class StarPattern extends Pattern {
 	sharpness = 1
 	spread = 1
 	hollow = 0.1
+	skip = 0
 
 	constructor(color: CRGB, direction: number, speed: number, leds: CRGB[], numEyes: number = 1) {
 		super(leds, numEyes)
@@ -59,6 +60,15 @@ class StarPattern extends Pattern {
 					let decayRate = this.decayRate * ((NUM_EYE_RINGS - ringIndex) * this.hollow)
 					this.leds[ledIndex] = this.leds[ledIndex].lerp8(this.decayColor, decayRate)
 				} else {
+					// determine if index falls within an even segment
+					if (this.skip > 0) {
+						const segmentIndex = Math.round(i / segmentSize)
+						const isEvenSegment = segmentIndex % this.skip === 0
+						if (isEvenSegment) {
+							continue
+						}
+					}
+
 					const ratio = (i % segmentSize) / segmentSize
 					let blend = ratio * 255
 

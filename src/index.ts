@@ -33,6 +33,7 @@ class App {
 		spread: 1,
 		hollow: 0.07,
 		segmentCount: 5,
+		skip: 0,
 		speed: 7,
 		direction: 'out',
 	}
@@ -196,8 +197,24 @@ class App {
 				this.settings.segmentCount = value
 				this.pattern.segmentCount = value
 				this.canvas.render()
+
+				patternFolder.controllers.forEach((controller) => {
+					switch (controller.property) {
+						case 'skip':
+							controller.max(value)
+							break
+					}
+				})
 			})
 		this.pattern.segmentCount = this.settings.segmentCount
+		patternFolder
+			.add({ skip: this.settings.skip }, 'skip', 0, this.settings.segmentCount, 1)
+			.onChange((value: number) => {
+				this.settings.skip = value
+				this.pattern.skip = value
+				this.canvas.render()
+			})
+		this.pattern.skip = this.settings.skip
 		patternFolder.add({ speed: this.settings.speed }, 'speed', 0, 10, 1).onChange((value: number) => {
 			this.settings.speed = value
 			this.pattern.speed = value
