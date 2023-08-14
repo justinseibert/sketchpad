@@ -3,8 +3,16 @@ class CRGB {
 	g: number
 	b: number
 
-	constructor(r: number, g: number, b: number) {
-		this.r = r
+	constructor(r: number | string, g: number = 0, b: number = 0) {
+		if (typeof r === 'string') {
+			if (r.startsWith('#')) {
+				return CRGB.fromHex(r)
+			} else if (r.startsWith('rgb')) {
+				return CRGB.fromRgb(r)
+			}
+		}
+
+		this.r = r as number
 		this.g = g
 		this.b = b
 	}
@@ -24,6 +32,14 @@ class CRGB {
 
 	toString(): string {
 		return `rgb(${this.r}, ${this.g}, ${this.b})`
+	}
+
+	static fromRgb(rgb: string): CRGB {
+		const parts = rgb.split(',')
+		const r = parseInt(parts[0].substring(4))
+		const g = parseInt(parts[1])
+		const b = parseInt(parts[2].substring(0, parts[2].length - 1))
+		return new CRGB(r, g, b)
 	}
 
 	static fromHex(hex: string): CRGB {
