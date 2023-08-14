@@ -30,7 +30,7 @@ class App {
 		decayColor: '#000000',
 		decayRate: 12,
 		sharpness: 1.3,
-		thickness: 0.5,
+		spread: 1,
 		segmentCount: 5,
 		speed: 7,
 		direction: 'out',
@@ -141,6 +141,30 @@ class App {
 			this.canvas.render()
 		})
 		this.pattern.decayColor = new CRGB(this.settings.decayColor)
+		// add button to invert colors
+		patternFolder.add(
+			{
+				invertColors: () => {
+					const newColors = {
+						ringColor: this.settings.decayColor,
+						decayColor: this.settings.ringColor,
+					}
+
+					// update gui colors
+					patternFolder.controllers.forEach((controller) => {
+						switch (controller.property) {
+							case 'ringColor':
+								controller.setValue(newColors.ringColor)
+								break
+							case 'decayColor':
+								controller.setValue(newColors.decayColor)
+								break
+						}
+					})
+				},
+			},
+			'invertColors'
+		)
 		patternFolder.add({ decayRate: this.settings.decayRate }, 'decayRate', 1, 255, 1).onChange((value: number) => {
 			this.settings.decayRate = value
 			this.pattern.decayRate = value
@@ -153,12 +177,12 @@ class App {
 			this.canvas.render()
 		})
 		this.pattern.sharpness = this.settings.sharpness
-		patternFolder.add({ thickness: this.settings.thickness }, 'thickness', 0, 1, 0.05).onChange((value: number) => {
-			this.settings.thickness = value
-			this.pattern.thickness = value
+		patternFolder.add({ spread: this.settings.spread }, 'spread', 0, 1, 0.01).onChange((value: number) => {
+			this.settings.spread = value
+			this.pattern.spread = value
 			this.canvas.render()
 		})
-		this.pattern.thickness = this.settings.thickness
+		this.pattern.spread = this.settings.spread
 		patternFolder
 			.add({ segmentCount: this.settings.segmentCount }, 'segmentCount', 1, 60, 1)
 			.onChange((value: number) => {

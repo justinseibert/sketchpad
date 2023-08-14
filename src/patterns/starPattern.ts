@@ -15,7 +15,7 @@ class StarPattern extends Pattern {
 	segmentCount = 5
 	currentRing = 0
 	sharpness = 1
-	thickness = 1
+	spread = 0
 
 	constructor(color: CRGB, direction: number, speed: number, leds: CRGB[], numEyes: number = 1) {
 		super(leds, numEyes)
@@ -65,8 +65,11 @@ class StarPattern extends Pattern {
 						blend = 255 - blend
 					}
 
+					// increase the sharpness further out from the center
+					blend = blend * (1 + ringIndex * (1 - this.spread))
+
 					// make the blending a little more dramatic
-					blend = blend * this.sharpness * (this.thickness * ringIndex)
+					blend = blend * this.sharpness
 
 					this.leds[ledIndex] = this.ringColor.lerp8(this.decayColor, blend)
 				}
