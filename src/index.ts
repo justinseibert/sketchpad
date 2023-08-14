@@ -6,7 +6,7 @@ import Canvas from './models/canvas'
 import Animation from './models/animation'
 import CRGB from './models/crgb'
 
-import RingInstance from './models/ring'
+import RingInstance, { Ring } from './models/ring'
 import StarPattern from './patterns/starPattern'
 
 import { r360 } from './utils/geometry'
@@ -19,13 +19,21 @@ class App {
 
 	pattern: StarPattern
 
-	settings = {
+	private settings = {
 		dpi: 0.1,
 		blur: 1,
 		ringSize: 12,
 		ringCount: 8,
 		isBacked: true,
 		isLabeled: false,
+		ringColor: '#d9f260',
+		decayColor: '#000000',
+		decayRate: 12,
+		sharpness: 1.3,
+		thickness: 0.5,
+		segmentCount: 5,
+		speed: 7,
+		direction: 'out',
 	}
 
 	constructor(el: HTMLDivElement) {
@@ -34,9 +42,6 @@ class App {
 
 	init() {
 		this.canvas = new Canvas(this.el, { allowFullscreen: true })
-		this.canvas.dpi = this.settings.dpi
-		this.canvas.ctx.filter = this.settings.blur > 0 ? `blur(${this.settings.blur}px)` : 'none'
-		this.canvas.resize()
 
 		this.canvas.beforeRender = () => {
 			const {
@@ -48,39 +53,25 @@ class App {
 
 			this.canvas.clear()
 			if (this.settings.isBacked) {
-				this.canvas.ctx.fillStyle = CRGB.Black.toString()
-				this.canvas.ctx.beginPath()
-				this.canvas.ctx.moveTo(x, y)
-				this.canvas.ctx.arc(x, y, RingInstance.outerRadius, 0, r360)
-				this.canvas.ctx.fill()
+				ctx.fillStyle = CRGB.Black.toString()
+				ctx.beginPath()
+				ctx.moveTo(x, y)
+				ctx.arc(x, y, RingInstance.outerRadius, 0, r360)
+				ctx.fill()
 			}
 		}
 
 		window.addEventListener('resize', () => {
 			this.canvas.resize()
 		})
-		window.addEventListener('mouseup', () => {
-			// start or stop animation
-			// this.animation.toggle()
-			// this.renderAnimationFrame()
-		})
 
-		const testColors = [
-			new CRGB(0, 100, 255).lerp8(CRGB.Black, 200),
-			new CRGB(80, 255, 0),
-			new CRGB(255, 0, 0),
-			new CRGB(0, 80, 255),
-		]
-		const ringColor = testColors[1]
-		const decayColor = testColors[3]
-		const decayRate = 2
-		const sharpness = 2.1
-		const segmentCount = 12
-		this.pattern = new StarPattern(ringColor, 1, 5, new Array(500).fill(CRGB.Black), 1)
-		this.pattern.decayColor = decayColor
-		this.pattern.decayRate = decayRate
-		this.pattern.sharpness = sharpness
-		this.pattern.segmentCount = segmentCount
+		this.pattern = new StarPattern(
+			new CRGB(this.settings.ringColor),
+			this.convertDirectionToNumber(this.settings.direction),
+			this.settings.speed,
+			new Array(500).fill(CRGB.Black), // just make sure it's more than the total number of leds
+			1
+		)
 		const framerate = 1000
 		this.animation = new Animation(() => this.renderAnimationFrame(), framerate)
 		this.animation.start()
@@ -103,12 +94,13 @@ class App {
 		}
 
 		const displayFolder = this.gui.addFolder('Display')
-		const ringFolder = this.gui.addFolder('Ring')
 
-		displayFolder.add({ dpi: this.canvas.dpi }, 'dpi', 0.1, 2, 0.1).onChange((value: number) => {
+		displayFolder.add({ dpi: this.settings.dpi }, 'dpi', 0.1, 2, 0.1).onChange((value: number) => {
+			this.settings.dpi = value
 			this.canvas.dpi = value
 			this.canvas.resize()
 		})
+		this.canvas.dpi = this.settings.dpi
 		displayFolder.add({ blur: this.settings.blur }, 'blur', 0, 3, 1).onChange((value: number) => {
 			this.settings.blur = value
 			this.canvas.render()
@@ -122,16 +114,83 @@ class App {
 			this.canvas.render()
 		})
 
-		ringFolder.add({ ringSize: this.settings.ringSize }, 'ringSize', 1, 25, 1).onChange((value: number) => {
+		const ringsFolder = this.gui.addFolder('Rings')
+		ringsFolder.add({ ringSize: this.settings.ringSize }, 'ringSize', 1, 25, 1).onChange((value: number) => {
 			this.settings.ringSize = value
 			RingInstance.size = value
 			this.canvas.render()
 		})
-		ringFolder.add({ ringCount: this.settings.ringCount }, 'ringCount', 1, 8, 1).onChange((value: number) => {
+		RingInstance.size = this.settings.ringSize
+		ringsFolder.add({ ringCount: this.settings.ringCount }, 'ringCount', 1, 8, 1).onChange((value: number) => {
 			this.settings.ringCount = value
 			RingInstance.numRings = value
 			this.canvas.render()
 		})
+		RingInstance.numRings = this.settings.ringCount
+
+		const patternFolder = this.gui.addFolder('Pattern')
+		patternFolder.addColor({ ringColor: this.settings.ringColor }, 'ringColor').onChange((value: string) => {
+			this.settings.ringColor = value
+			this.pattern.ringColor = new CRGB(value)
+			this.canvas.render()
+		})
+		this.pattern.ringColor = new CRGB(this.settings.ringColor)
+		patternFolder.addColor({ decayColor: this.settings.decayColor }, 'decayColor').onChange((value: string) => {
+			this.settings.decayColor = value
+			this.pattern.decayColor = new CRGB(value)
+			this.canvas.render()
+		})
+		this.pattern.decayColor = new CRGB(this.settings.decayColor)
+		patternFolder.add({ decayRate: this.settings.decayRate }, 'decayRate', 1, 255, 1).onChange((value: number) => {
+			this.settings.decayRate = value
+			this.pattern.decayRate = value
+			this.canvas.render()
+		})
+		this.pattern.decayRate = this.settings.decayRate
+		patternFolder.add({ sharpness: this.settings.sharpness }, 'sharpness', 0, 10, 0.1).onChange((value: number) => {
+			this.settings.sharpness = value
+			this.pattern.sharpness = value
+			this.canvas.render()
+		})
+		this.pattern.sharpness = this.settings.sharpness
+		patternFolder.add({ thickness: this.settings.thickness }, 'thickness', 0, 1, 0.05).onChange((value: number) => {
+			this.settings.thickness = value
+			this.pattern.thickness = value
+			this.canvas.render()
+		})
+		this.pattern.thickness = this.settings.thickness
+		patternFolder
+			.add({ segmentCount: this.settings.segmentCount }, 'segmentCount', 1, 60, 1)
+			.onChange((value: number) => {
+				this.settings.segmentCount = value
+				this.pattern.segmentCount = value
+				this.canvas.render()
+			})
+		this.pattern.segmentCount = this.settings.segmentCount
+		patternFolder.add({ speed: this.settings.speed }, 'speed', 0, 10, 1).onChange((value: number) => {
+			this.settings.speed = value
+			this.pattern.speed = value
+			this.canvas.render()
+		})
+		this.pattern.speed = this.settings.speed
+		patternFolder
+			.add({ direction: this.settings.direction }, 'direction', ['in', 'out'])
+			.onChange((value: string) => {
+				this.settings.direction = value
+				this.pattern.direction = this.convertDirectionToNumber(value)
+				this.canvas.render()
+			})
+		this.pattern.direction = this.convertDirectionToNumber(this.settings.direction)
+
+		this.canvas.resize()
+	}
+
+	private convertDirectionToString = (direction: number) => {
+		return direction == -1 ? 'in' : 'out'
+	}
+
+	private convertDirectionToNumber = (direction: string) => {
+		return direction == 'in' ? -1 : 1
 	}
 
 	private blurCanvas = (value: number) => {
